@@ -18,26 +18,38 @@ straight to TDD writing; it never comes back for user sign-off.
 - Questions only for the irreversible or expensive.
 - Everything else: assume, record, move.
 
-## Hard Budget: Questions (0-2 max)
+## Hard Budget: Questions (0-2 max, and 0 is the target)
 
-Ask ONLY if:
+Zero is the expected number. Every question is a round-trip the prototype
+would have answered on its own, and the whole bet is that building is faster
+than asking. Ask ONLY if:
 
 | Condition | Example |
 |-----------|---------|
-| Decision is irreversible or costly to undo | "Does this replace X or coexist with it?" (architectural fork) |
-| Success criteria conflict | "Does this prioritize speed or correctness?" (can't optimize both) |
-| Scope is genuinely ambiguous from the request | "Should this handle Y or stop at X?" (bounds aren't clear) |
+| Wrong choice is irreversible or costly to undo | "Does this replace X or coexist with it?" (destroys data either way) |
+| Success criteria genuinely conflict | "Speed or correctness?" (cannot optimize both, and the whole design turns on it) |
+| The options split the option space so far apart that building the wrong one wastes the entire run | "A CLI or a web app?" |
+
+That third condition is narrow on purpose. "The scope is a bit unclear" is not
+it — that describes nearly every real request, and treating it as a question
+is how the interview comes back. Ambiguous bounds get a decision and a ledger
+entry, not a question.
 
 Do NOT ask about: naming, library choices, structure, file layout, whether
-to use a test framework, defaults, ordering of features, or styling. Decide
-these yourself and record them.
+to use a test framework, defaults, ordering of features, styling, or how far
+scope extends. Decide these yourself and record them.
+
+**Never block on an answer.** If you do ask, state the default you are
+proceeding with in the same breath, then start building against it. If the
+answer arrives and differs, adjust — that is cheaper than the wait. A question
+that stops work has already cost more than it saved.
 
 ## Process
 
 1. **Read the request.** Assess scope and existing context (code, docs, recent
    changes).
-2. **Ask your 0-2 questions** (only if conditions above are met). Wait for
-   answers.
+2. **Ask your 0-2 questions** (only if the conditions above are met), stating
+   the default you are proceeding with. Do not wait — keep working.
 3. **Decide everything else.** Record each unilateral choice as an entry in
    `.hordev/assumptions.md`, using the entry format defined by
    `assumption-ledger`. Do not invent a shorter format — `horde-qa` reads
@@ -55,6 +67,12 @@ these yourself and record them.
 Path: `.hordev/specs/<feature-name>.md`
 
 Sections (in order):
+- **The request, verbatim** (quoted, unedited): The user's own words, copied
+  exactly. Never paraphrase, never tidy, never summarize. Every later stage
+  proves theorems against this spec, so the spec is the only place the original
+  wording survives — and your reading of it is the one thing no test can check.
+  `horde-qa` reads this block to catch a misread that is otherwise invisible
+  because everything downstream is consistent with it.
 - **Goal** (1 sentence): What does this build? Who uses it?
 - **Core scope** (3-5 bullet points): What is in; what is explicitly out.
 - **Key assumptions** (3-5 bullet points): Architectural choices, defaults,

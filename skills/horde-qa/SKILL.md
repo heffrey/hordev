@@ -1,6 +1,6 @@
 ---
 name: horde-qa
-description: Use when reviewing work from multiple horde agents before claiming completion - QA is the only gate standing between wrong design and wrong prototype
+description: Use after reconciling-horde-output leaves a tree that builds and passes its tests, before telling the user anything is done, or whenever you are about to write "tests pass", "working", or "complete" about horde output
 ---
 
 # Horde QA
@@ -32,8 +32,31 @@ Cheap agents will cut corners. Your job catches them before they compound.
 - Check if the TDD silently dropped any requirements.
 - Look for assumptions the spec didn't make.
 
-Both must pass. Q1 failure means agent didn't finish. Q2 failure means design
-was wrong all along.
+**Question 0, and you run it first: was the spec right?**
+
+Q1 and Q2 are a closed loop. The TDD is checked against the spec, the code is
+checked against the TDD — and if the spec misread what the user wanted, every
+one of those checks passes and the prototype is confidently wrong. Nothing else
+in the pipeline can catch this, because everything downstream is *consistent*
+with the misread.
+
+So start here, before running anything:
+
+1. Read **The request, verbatim** at the top of `.hordev/specs/<feature-name>.md`.
+   The user's own words, not your summary of them.
+2. Read the spec's Goal and Core scope directly against it.
+3. Ask: would the person who wrote that request recognize this as what they
+   asked for? Is anything they said missing? Is anything here that they never
+   asked for?
+
+A mismatch is not a test failure and no amount of green suite hides it.
+Escalate to `rapid-spec` with the specific words that were misread.
+
+Do not skip this because the tests pass. Passing tests prove the code matches
+the TDD; they say nothing about whether the TDD was aimed at the right target.
+
+All three must pass. Q0 failure means the run was aimed wrong. Q1 failure means
+an agent didn't finish. Q2 failure means the design was wrong all along.
 
 ## Verifying at Horde Scale
 

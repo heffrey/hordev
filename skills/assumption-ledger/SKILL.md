@@ -36,7 +36,7 @@ entries. Falsified assumptions with large blast radii send you back to
 | Decided      | yes      | What was chosen (e.g., "SQLite for persistence"). Terse. |
 | Rationale    | yes      | Why in one sentence. If you need two sentences, it's underspecified. |
 | Rejected     | yes      | The alternative not chosen. If none existed, write "None"; that signals an innovation, not a dodge. |
-| Blast radius | yes      | What changes if wrong. One sentence. "Tiny" for cosmetic; "Large" for architecture; "Existential" if it invalidates the core proposition. |
+| Blast radius | yes      | What changes if wrong. One sentence. "Tiny" for cosmetic; "Large" for architecture; "Existential" if it invalidates the core proposition. See below — Existential is the one value that changes what you do. |
 | Falsified by | yes      | How you will know this is wrong. Cite a test name, a prototype behavior, a specific user reaction, or "UAT". |
 | Status       | yes      | `open`, `confirmed`, or `falsified`. |
 
@@ -91,6 +91,26 @@ that change the build?
 **Rule of thumb**: If `rapid-spec` had to guess at product shape, data model,
 UX pattern, or performance strategy, log it. If it was just picking a word or
 a color, ship it.
+
+## Existential Entries Get Announced, Not Asked
+
+Every other blast radius is logged and read at the end of the run. An
+`Existential` entry — one that invalidates the core proposition if wrong — is
+the exception, because discovering it at the end means the whole run was
+wasted.
+
+It still does not earn a question. hordev does not stop to ask, and waiting for
+an answer costs more than the rebuild would. Instead, **say it once, in one
+line, before dispatching the horde, and keep going**:
+
+```
+Assuming A-003: this is a CLI, not a service. Building on that now.
+```
+
+Then build. If the user corrects it, you have lost minutes rather than a run.
+If they say nothing, you were right or they did not care — both fine.
+
+This is the whole discipline in miniature: surface the bet, do not wait on it.
 
 ## Status Lifecycle
 

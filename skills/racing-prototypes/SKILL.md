@@ -57,7 +57,21 @@ Dispatch candidates as parallel agents with identical prompts that name only the
 
 ## Killing Losers
 
-Delete the losing candidates' worktrees entirely. Do not cherry-pick pieces from multiple candidates into a hybrid. That produces something none of the candidates was and makes the race meaningless.
+**Do not cherry-pick.** Never merge pieces from several candidates into a
+hybrid. That produces something none of them was, and it makes the race
+meaningless — you can no longer say which approach the evidence supported.
+
+**Do not delete anything before the user has seen the report.** The point of
+racing is that a human gets to look at working versions and judge; deleting the
+losers first leaves them a summary written by the model that picked the winner.
+Keep every candidate on its own branch, name them all in the report, and let
+the user open any of them.
+
+Losing branches are cheap. Leave them until the user has responded, then delete
+on their word or leave them alone — never as the last silent act of the race.
+
+You recommend the winner with evidence. You do not get to be the only one who
+saw the alternatives.
 
 Record the winner and the decision in `.hordev/assumptions.md` (use `assumption-ledger` format). The entry should be: candidate ID, which axes differentiated them, which criteria favored the winner, and why it matters to the system. This is a decision the user never got asked about; assume-tracking makes it visible.
 

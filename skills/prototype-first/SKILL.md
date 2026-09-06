@@ -1,6 +1,6 @@
 ---
 name: prototype-first
-description: Use when a run risks drifting into polish, over-design, or optional work
+description: Use when deciding what to build first, when about to add config, flags, an abstraction layer, error handling for undescribed cases, or tests beyond the TDD, or when deciding whether the prototype is done
 ---
 
 # Prototype-First

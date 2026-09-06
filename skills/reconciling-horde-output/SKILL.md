@@ -1,6 +1,6 @@
 ---
 name: reconciling-horde-output
-description: Use when a horde of parallel agents has finished their tasks and you need to integrate the code into one coherent codebase
+description: Use when horde agents have returned and their files have not yet been built or tested together - the first pass that makes parallel output compile, agree at the seams, and match the TDD's names
 ---
 
 # Reconciling Horde Output

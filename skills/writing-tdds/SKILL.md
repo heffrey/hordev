@@ -1,8 +1,6 @@
 ---
 name: writing-tdds
-description: Use when a rapid-spec is complete and you need to
-  convert it to test-driven behavior contracts for parallel
-  implementation by multiple agents.
+description: Use when a spec exists in .hordev/specs/ and no TDD exists for it yet, or when horde-qa sends a TDD back for a missed requirement or a weak test
 ---
 
 # Writing TDDs (Test-Driven Designs)

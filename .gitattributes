@@ -1,0 +1,8 @@
+# Hooks are executed by the harness. A CRLF clone on Windows makes them fail
+# with a bad-interpreter error that reads as a hordev bug rather than a
+# checkout artifact.
+*.sh text eol=lf
+
+# Skills are read by models and diffed by people; keep line endings stable.
+*.md text eol=lf
+*.json text eol=lf

@@ -1,6 +1,6 @@
 ---
 name: isolating-horde-workspaces
-description: Use when setting up a horde run to establish isolation and prevent agents from colliding in the user's working copy or default branch
+description: Use before dispatching-hordes launches its first wave, before racing-prototypes creates candidates, and when tearing down worktrees after horde-qa passes
 ---
 
 # Isolating Horde Workspaces
@@ -51,8 +51,9 @@ All agents in this run work in `$HORDE_ROOT`. Their ownership is enforced by the
 
 Create separate worktrees only when agents will:
 - **Race competing prototypes** (`racing-prototypes`). Mandatory, not optional:
-  each candidate is a separate track of work with its own branch, so the
-  candidates can be compared as diffs and the losers deleted whole.
+  each candidate is a separate track of work with its own branch, so the user
+  can open any of them and compare. Keep the losing branches until the user has
+  seen the report — deleting them first leaves nothing to compare.
 - **Run conflicting servers or builds** (e.g., two agents binding port 3000, or simultaneous cargo builds)
 - **Perform destructive or rollback-heavy experiments** (migrations, large deletions, repo rewriting)
 - **Do speculative work you expect to discard** (prove feasibility, then decide)

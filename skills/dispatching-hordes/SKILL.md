@@ -1,6 +1,6 @@
 ---
 name: dispatching-hordes
-description: Use when executing independent tasks by spawning a large batch of cheap, parallel agents
+description: Use when a decomposed task list with file ownership is ready and agents need launching, or when a dispatched agent times out, returns a plan instead of code, fails its tests, or reports BLOCKED
 ---
 
 # Dispatching Hordes

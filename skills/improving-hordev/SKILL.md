@@ -103,9 +103,42 @@ under-specified:
 3. **Smallest edit.** Add one decision rule to the skill, or clarify an existing one.
    Do NOT rewrite the skill wholesale. If the change is complex, move to step 5.
 4. **Update the run log.** Fill the RULE field for this entry.
-5. **Commit with message**: `improving-hordev: <skill> — add rule for <symptom>`.
-   Keep amendments reviewable in git history.
+5. **Write the amendment where it will survive.** See below — this depends on
+   how hordev was installed, and getting it wrong means the edit is silently
+   discarded on the next plugin update.
 6. **Complex changes only**: Hand off to `writing-hordev-skills` for prose or structure.
+
+## Where the amendment goes
+
+Check whether the skills you are about to edit live in a git repository the
+user controls:
+
+```bash
+git -C "$(dirname "$SKILL_PATH")" rev-parse --show-toplevel 2>/dev/null
+```
+
+**Installed from a clone** (the path resolves, and it is the hordev checkout):
+edit the skill directly and commit with
+`improving-hordev: <skill> — add rule for <symptom>`. Keep amendments
+reviewable in git history.
+
+**Installed from the marketplace** (skills live under the plugin cache): do
+NOT edit them. That directory is not version controlled and is overwritten on
+the next plugin update, so the edit looks applied and then vanishes. Instead
+append the proposed amendment to `.hordev/proposed-amendments.md` in the
+project, in this form:
+
+```
+## <skill-name> — <symptom>
+
+Observed: <what happened, and the run-log entries that show the repeat>
+Rule to add: <the exact text to insert, and where>
+```
+
+Then tell the user the file exists and that applying it means running hordev
+from a clone or opening a pull request upstream. Self-improvement that
+silently no-ops is worse than none, because it teaches nobody while looking
+like it worked.
 
 Example amendment:
 

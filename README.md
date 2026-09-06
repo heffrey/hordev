@@ -93,14 +93,21 @@ it:
 The entrypoint skill loads itself at session start, so there is nothing else to
 configure. Restart the session after installing.
 
-Requires `bash` and `python3` on PATH — both hooks use them.
+Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.1.0. The skills are written and the hooks work; the library
-has not yet been run in anger across enough projects for its own
-self-improvement loop to have taught it much. Expect rough edges, and expect
-the rules to change as real runs falsify them.
+Early. Version 0.1.0.
+
+The skills are written. Both hooks run correctly when executed directly —
+`session-start.sh` emits the entrypoint as valid JSON, and `reflect.sh` blocks
+once when the run log grows, honors the `stop_hook_active` loop guard, and
+stays silent afterward. They have not yet been exercised inside a live Claude
+Code session, which is a different thing and the next thing to verify.
+
+The library has not been run in anger across enough projects for its own
+self-improvement loop to have taught it anything. Expect rough edges, and
+expect these rules to change as real runs falsify them.
 
 ## License
 
