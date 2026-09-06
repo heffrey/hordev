@@ -46,8 +46,9 @@ the rest (e.g., if build fails, fix and retest before moving on).
 
 4. **Find duplicates** — Look for helpers that appear in multiple files with
    similar logic but different names or signatures (e.g., two retry loops,
-   two config parsers). Check git history to confirm they were independently
-   written, not copy-paste.
+   two config parsers). Agents never see each other's files, so anything
+   similar in two of them was written independently — there is no copy-paste
+   to rule out.
 
 5. **Validate naming against TDD** — Run `grep` for test expectations. If
    a test expects `process_data()` but the implementation has `handle_data()`,
@@ -119,3 +120,9 @@ When reconciliation is complete:
 **Do not deploy.** Hand off to `horde-qa`, which runs a fuller test suite,
 acceptance criteria, and performance checks that reconciliation does not cover.
 
+## Log what went wrong
+
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+for every seam collision, duplicated helper, and silently stubbed task you find.
+Mark `COST: systemic` when the same class appeared in an earlier run — that is
+what clears the amendment bar.

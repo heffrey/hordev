@@ -15,9 +15,9 @@ parallel. Tests come first because with no approval gate between design
 and build, the tests ARE the specification — they're the only thing that
 can falsify the design.
 
-**Do not ask for user approval of the TDD. Specs get approved; designs
-don't. Write, decide locally when underdetermined, log assumptions, move
-forward.**
+**Do not ask for user approval of the TDD. Nothing in hordev is approved
+before build — the spec was not either. Write, decide locally when
+underdetermined, log assumptions, move forward.**
 
 ## TDD Artifact
 
@@ -64,7 +64,7 @@ def test_[behavior]():
 ## Implementation Notes
 
 [If spec was underdetermined on a decision point, log it here:
-"Decided X because Y. See assumption-ledger entry ID-123."]
+"Decided X because Y. See assumption-ledger entry A-001."]
 
 [Any shared setup, fixtures, or test utilities needed across units.]
 ```
@@ -94,11 +94,13 @@ a paragraph, the behavior is too coarse — split it.
 
 After writing the TDD:
 
-1. Move to `decomposing-for-hordes` — it slices the TDD into
-   independent tasks, assigns one per agent, and dispatches.
-2. Each agent implements their task units in parallel, pushes
-   to a branch.
-3. Reconciliation verifies all tests pass.
+1. Return the TDD path and stop. If you are a dispatched agent you cannot
+   advance the chain; the orchestrator does that.
+2. The orchestrator runs `decomposing-for-hordes` to slice the TDD into
+   independent tasks with one owner each, sets up isolation per
+   `isolating-horde-workspaces`, then dispatches.
+3. Agents write files only. The orchestrator commits after
+   `reconciling-horde-output`, and `horde-qa` verifies.
 
 Do not pause for approval or ask the user to review before dispatch.
 
@@ -111,7 +113,7 @@ If the spec is ambiguous, decide locally and log the assumption:
    Status** (see `assumption-ledger` skill for format)
 
 2. Reference it in "Implementation Notes": "Decided X because Y.
-   See assumption-ledger entry ID-NNN."
+   See assumption-ledger entry A-NNN."
 
 3. Write the test reflecting your decision.
 

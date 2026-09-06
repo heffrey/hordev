@@ -84,15 +84,16 @@ scale. Hypothesis testing is sequential—one variable at a time.
 - Fix is small (< 10 lines).
 - You understand the owning agent's original task fully.
 
-**Re-dispatch the owning agent if:**
+**Re-dispatch the task if:**
 - The fix requires re-thinking the agent's design.
 - Multiple pieces of the agent's output need rework.
 - Assumption was falsified (agent didn't know the real requirement).
 - You're unsure whether this is in scope for the original task.
 
-Send the agent a message naming the file, the bug, root cause, and what to
-fix. Include a test case that now fails. Let them fix it in context; they
-understand their own reasoning better than you do after the fact.
+Re-dispatch means a **fresh agent with an amended prompt** — see
+`dispatching-hordes`. The original agent is finished and has no context left
+to resume into; there is nobody to message. Put everything the new agent needs
+in the prompt: the file, the bug, the root cause, and the failing test case.
 
 ## The Systematic Process
 
@@ -126,8 +127,8 @@ understand their own reasoning better than you do after the fact.
 1. Decide: fix in place or re-dispatch (see rules above).
 2. If fixing: create a failing test first, implement the fix, verify tests
    pass.
-3. If re-dispatching: message the agent with file, bug, root cause, and
-   test case.
+3. If re-dispatching: a fresh agent, with file, bug, root cause, and failing
+   test case inlined in the prompt.
 
 ## Red Flags — Stop and Re-Investigate
 
@@ -146,10 +147,18 @@ If the same seam bug recurs across runs (e.g., "JSON keys drift between
 agents" or "agents miss each other's timestamps"), **don't just patch it**.
 The bug is in the task decomposition, not the code.
 
-Message `improving-hordev` with:
+Log it to `.hordev/run-log.md` with `COST: systemic`, recording:
 - What bug recurred (the pattern).
 - Which seams keep breaking (file boundary, interface, data shape).
 - What assumption or spec detail was missing.
 
-Let the improvement agent tighten the skill that decomposed the work.
-Recurring seams = broken decomposition.
+`improving-hordev` runs after the run ends, not now — it never edits a skill
+mid-run, and never from a subagent. Recurring seams mean broken decomposition,
+so that is the skill it will tighten.
+
+## Log what went wrong
+
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+when a bug class repeats across runs — the same seam breaking, the same kind of
+fake test. A recurring bug means a skill is under-specified, not that the code
+was unlucky.

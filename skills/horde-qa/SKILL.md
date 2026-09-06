@@ -96,9 +96,14 @@ doesn't mention it, check it against the prototype.
 - Test too weak: Strengthen, re-run. If still passes, escalate to `writing-tdds`.
 
 **TDD wrong (Q2):**
-- TDD missed requirement: Escalate to `rapid-spec`. Do NOT let agent add tests
-  post-hoc. Spec must be fixed, TDD rewritten.
-- Assumption false: Escalate to `rapid-spec`.
+- Requirement is in the spec but the TDD dropped it: escalate to
+  `writing-tdds`. The spec is fine; the design lost something. Do NOT let an
+  agent add tests post-hoc.
+- Requirement is missing from the spec too: escalate to `rapid-spec`. Spec
+  fixed first, then TDD rewritten.
+- Assumption falsified: escalate to `rapid-spec` if its blast radius is large
+  enough to change the spec; otherwise mark it `falsified` in
+  `.hordev/assumptions.md` and fix forward.
 - Prototype doesn't handle: Fix prototype, re-run tests.
 
 **Systemic pattern (e.g., all agents stubbing):** Feed to `improving-hordev`
@@ -121,6 +126,21 @@ Never claim completion without listing what you verified and what you didn't.
 If you skipped a step, say which and why (e.g., "No user-facing path in library
 code, Q1 only").
 
+### This report ends the run
+
+Nobody approved the spec or the TDD, so this is where the user finds out what
+was decided for them. Your report is the run's final output and must carry
+three things:
+
+1. **Verification results** — what you ran, what it said, what you did not check.
+2. **Open assumptions** from `.hordev/assumptions.md`, highest blast radius
+   first, in the format `assumption-ledger` defines. Never omit these because
+   the tests passed; a passing suite proves the code matches the TDD, not that
+   the assumptions behind it were right.
+3. **The branch** the work is on, so the user can review or discard it whole.
+
+Do not merge, push, or delete the branch. Hand it over and let the user decide.
+
 ## Feeding Systemic Issues
 
 When you see a pattern (not one-off bug):
@@ -128,8 +148,17 @@ When you see a pattern (not one-off bug):
 - All agents weakened tests until they passed
 - All agents stubbed same integration point
 
-Dispatch to `improving-hordev` with: what pattern, which agents, which files,
-and the hypothesis about why it happened (spec unclear? TDD bad? agents
-coordinating wrong?).
+Log it to `.hordev/run-log.md` with `COST: systemic`: what pattern, which
+agents, which files, and the hypothesis about why it happened (spec unclear?
+TDD bad? agents coordinating wrong?). `improving-hordev` reads that log after
+the run ends — do not dispatch it, and do not edit a skill mid-run.
 
 Do NOT leave systemic issues unreported. They will cascade to next horde run.
+
+## Log what went wrong
+
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+for every defect that escaped reconciliation, every assumption falsified here,
+and every case where the TDD itself was wrong. These are the entries that
+matter most: they are where hordev's speed bet lost, and they are exactly what
+the library needs to learn from rather than quietly delete.

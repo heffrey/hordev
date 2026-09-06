@@ -31,9 +31,14 @@ Never run a horde in the user's checkout, and never on the default branch.
 **Use this for most hordes.** Create one worktree for the entire horde. Agents coordinate via file ownership assigned in `decomposing-for-hordes`: each file belongs to exactly one agent. Why: Process isolation per agent wastes merging overhead when agents do not actually collide. Ownership suffices when files are disjoint.
 
 ```bash
-# Create shared horde worktree from default branch
+# Resolve the default branch instead of assuming origin/main. Repos use
+# master, have no remote, or name their default something else entirely.
+BASE=$(git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null) ||
+  BASE=$(git symbolic-ref --quiet --short HEAD)
+
+# Create shared horde worktree
 HORDE_ROOT=".claude/worktrees/horde-$(date +%s)"
-git worktree add "$HORDE_ROOT" origin/main -b "horde/run-$(date +%s)"
+git worktree add "$HORDE_ROOT" "$BASE" -b "horde/run-$(date +%s)"
 cd "$HORDE_ROOT"
 
 # Verify you are in the new worktree
@@ -56,7 +61,7 @@ For each agent needing isolation:
 
 ```bash
 AGENT_WORKTREE=".claude/worktrees/agent-$AGENT_NAME"
-git worktree add "$AGENT_WORKTREE" origin/main -b "horde/agent-$AGENT_NAME"
+git worktree add "$AGENT_WORKTREE" "$BASE" -b "horde/agent-$AGENT_NAME"
 ```
 
 Each agent owns its worktree directory and branch. Keep it isolated: do NOT access files across worktrees.

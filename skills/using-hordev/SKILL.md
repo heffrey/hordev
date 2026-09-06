@@ -56,9 +56,55 @@ empty, never to save time — each one is already sized for speed.
 5. **Verify** — `horde-qa`. The only thing standing between a wrong spec and a
    wrong prototype. Never skipped, never delegated to a cheap model.
 
+## Who runs what
+
+You are the orchestrator. You stay on `opus` for the whole run and you are the
+only thing that dispatches, advances the chain, or talks to the user. Skills do
+not invoke each other — you invoke them, in order, as work returns.
+
+A dispatched agent cannot see this conversation, cannot ask the user anything,
+and cannot hand off to the next stage. So:
+
+1. **Extract.** You ask `rapid-spec`'s 0-2 questions yourself, if any earn a
+   slot. Then dispatch one `haiku` agent with the `rapid-spec` skill text, the
+   request, and the answers inlined. It returns a path to
+   `.hordev/specs/<feature-name>.md`. It does not talk to the user.
+2. **Design.** Dispatch one `haiku` agent with the `writing-tdds` skill text and
+   the spec path. It returns a path to `.hordev/tdds/<feature-name>.md`.
+3. **Cut.** You run `decomposing-for-hordes` yourself. Then set up isolation per
+   `isolating-horde-workspaces` — one worktree for this track of work — before
+   any agent is dispatched. A horde that never got a worktree is running in the
+   user's checkout.
+4. **Swarm.** You dispatch the horde, then run `reconciling-horde-output`
+   yourself when it returns.
+5. **Verify.** You run `horde-qa` yourself.
+
+If a stage's agent returns something unusable, re-dispatch a fresh agent with an
+amended prompt. There is no resuming a finished agent — it has no context left
+to resume into.
+
+## Finishing a run
+
+`horde-qa`'s report is the run's final output. It must carry three things,
+because the user approved nothing along the way and this is where they find out
+what was decided for them:
+
+- What was verified, and what was not.
+- Open assumptions from `.hordev/assumptions.md`, highest blast radius first.
+- The branch the work is on, so they can review or discard it whole.
+
+Do not merge or delete the branch yourself. Hand it over.
+
+## Going wide
+
 When the right approach is genuinely unknown, the horde goes wide instead of
 deep: `racing-prototypes` builds two to four competing versions at once and
 picks a winner on evidence. Breadth is half of hordev's bet, not a special case.
+
+It sits between Design and Cut: one spec, one TDD shared by every candidate, one
+`haiku` agent per candidate in its own worktree. The winner then continues
+through the normal chain — Cut and Swarm if it still needs a horde to finish,
+otherwise straight to Verify.
 
 Supporting skills, used at any stage:
 

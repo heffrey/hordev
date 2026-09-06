@@ -29,6 +29,8 @@ Each agent gets a self-contained prompt with:
 5. **Acceptance criteria:** Hard stops. "Deliver X, or report BLOCKED"
 6. **Style bar:** Match the surrounding code (indent, naming, comment density)
 7. **Explicit instruction to write, not plan:** "Implement the code directly. Do not write a plan. Write the code."
+8. **Worktree path:** The horde's worktree from `isolating-horde-workspaces`. The agent works only there. Without it the agent edits the user's checkout.
+9. **Open assumptions:** The IDs and `Decided` lines from `.hordev/assumptions.md` that bear on this component. An agent that does not know what was assumed will contradict it.
 
 **Skeleton prompt:**
 
@@ -59,6 +61,13 @@ STYLE:
 - Use existing naming (camelCase, no prefixes)
 - Add JSDoc for public methods
 - Match indentation of Widget class
+
+WORKTREE: .claude/worktrees/horde-1730000000
+Work only inside this directory.
+
+OPEN ASSUMPTIONS (do not contradict):
+- A-002: Transaction amounts are integer cents, never floats.
+- A-007: No auth on internal endpoints for the prototype.
 
 Do not run git. Do not commit. Write the files and stop.
 
@@ -141,7 +150,7 @@ When agents finish, you're ready to reconcile immediately instead of re-deriving
 
 When all agents report completion (or failures you've ruled as non-blocking), move to `reconciling-horde-output`. Pass:
 
-- List of agents and their outputs (file paths, commit SHAs if applicable)
+- List of agents and the files each one wrote
 - Reconciliation checklist you prepared (file merges, interface validation)
 - Any concerns agents flagged
 - Wave success rate (e.g., "23/25 agents completed; 2 re-dispatched")
@@ -169,7 +178,18 @@ Do not attempt to merge or test here. Reconciliation handles conflict detection 
 - Agent G: Add caching layer (consumes B output)
 - Agent H: Write CLI tool (consumes A output)
 
-**Wave 3 (1 agent):**
-- Agent I: Reconcile and QA full suite (consumes everything)
+**There is no Wave 3.** Reconciliation and QA are not dispatched. When
+Wave 2 returns you run `reconciling-horde-output`, then `horde-qa`,
+yourself on `opus`. Dispatching either to a cheap agent means nothing is
+checking the design — see `using-hordev`.
 
-Dispatch Wave 1 now. Stage Wave 2 and 3 prompts while Wave 1 runs.
+Dispatch Wave 1 now. Stage Wave 2 prompts while Wave 1 runs.
+
+## Log what went wrong
+
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+whenever an agent returns nothing, returns a plan instead of code, reports
+BLOCKED, or has to be re-dispatched. Note the re-dispatch rate for the run.
+
+Nothing else writes this. If you skip it, `improving-hordev` has nothing to
+learn from and the library stops improving.

@@ -63,13 +63,16 @@ Record the winner and the decision in `.hordev/assumptions.md` (use `assumption-
 
 Example assumption entry:
 ```
-ID: choose-ui-paradigm-sep-2026
-Decided: modal-ui beat inline-ui on acceptability tests
-Rationale: modals allow complex multi-step workflows; inline UX 
-  hit token limit before passing acceptance tests
+ID: A-014
+Decided: modal-ui beat inline-ui on the acceptance tests
+Rationale: modals carry multi-step workflows; inline hit the token
+  limit before passing acceptance tests
 Rejected: inline-ui (failed tests), sidebar (untested)
-Blast radius: UI architecture now locked; changing would need 
-  refactor of state management
+Blast radius: Large — UI architecture is now locked; changing it means
+  refactoring state management
+Falsified by: users reporting the modal flow as heavy in first use,
+  or a multi-step flow that will not fit a modal
+Status: open
 ```
 
 ## Reporting

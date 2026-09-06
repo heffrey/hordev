@@ -95,6 +95,18 @@ Once tasks are decomposed:
 
 - Verify the independence checklist above.
 - List tasks with ownership and deliverables.
-- Pass to `dispatching-hordes` to dispatch them all at once.
+- **Set up isolation per `isolating-horde-workspaces` before anything is
+  dispatched.** One worktree for this track of work. A horde dispatched
+  without one is writing to the user's checkout.
+- Pass to `dispatching-hordes` to dispatch them all at once, with the worktree
+  path in every prompt.
 
 Never dispatch a task until its dependencies are met and its interface is locked.
+
+## Log what went wrong
+
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+whenever a cut you made turns out wrong: two agents needed the same file, a
+task was too large for one agent, or a dependency you missed forced a wave to
+be redone. Decomposition failures surface late, so they are easy to forget by
+the time they hurt.

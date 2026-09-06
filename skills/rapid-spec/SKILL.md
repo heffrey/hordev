@@ -45,8 +45,10 @@ these yourself and record them.
 4. **Write the spec artifact** (see format below) to
    `.hordev/specs/<feature-name>.md`. It is short enough for one pass
    (~300-400 words total).
-5. **Hand off.** Invoke `writing-tdds` with the spec path. Do NOT send the
-   spec to the user for review or approval.
+5. **Return the spec path and stop.** If you are running as a dispatched
+   agent, you cannot invoke the next stage or speak to the user — the
+   orchestrator advances the chain to `writing-tdds`. Never send the spec to
+   the user for review or approval.
 
 ## Spec Artifact Format
 
@@ -92,7 +94,7 @@ Assumptions: .hordev/assumptions.md
 The spec and ledger are your ONLY deliverable. Do NOT:
 - Present the spec to the user for approval
 - Offer to refine it based on user feedback
-- Wait for sign-off before invoking writing-tdds
+- Wait for sign-off before the run continues
 - Include "Does this look right?" or approval language
 
 ## Red Flags

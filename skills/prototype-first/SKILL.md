@@ -96,6 +96,9 @@ not prototyping. Redirect tests to the critical path.
 ## Corrective Question
 
 **Are we building to learn or to ship?** If the answer is "learn," you are in
-prototype mode. Stay thin. Record assumptions. If the answer is "ship," you have
-graduated to hardening — different pace, different tooling, different skill
-(`superpowers:finishing-a-development-branch` or similar).
+prototype mode. Stay thin. Record assumptions.
+
+If the answer is "ship," the prototype has done its job and hordev is the wrong
+tool for what comes next. Hardening is well-understood work against a spec you
+now trust — exactly the case where structure beats speed. Hand the branch over
+and say so plainly. Do not let a prototype drift into production by accretion.
