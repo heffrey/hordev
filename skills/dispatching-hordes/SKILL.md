@@ -60,8 +60,24 @@ STYLE:
 - Add JSDoc for public methods
 - Match indentation of Widget class
 
+Do not run git. Do not commit. Write the files and stop.
+
 Implement directly. Do not write a plan. Write the code.
 ```
+
+## Say Who Commits
+
+**Agents write files. The orchestrator commits.** State this in every prompt.
+
+An agent left to its own judgment will often commit its work. When a dozen of
+them do that at once they are racing on one git index and one lockfile, and the
+history comes back interleaved and half-attributed. Nothing about file
+ownership protects the index — it is shared state that file-level disjointness
+does not cover.
+
+The orchestrator commits once, after `reconciling-horde-output`, when the tree
+is coherent. If an agent genuinely needs its own history, it needs its own
+worktree — see `isolating-horde-workspaces`.
 
 ## Always Set Model Explicitly
 
