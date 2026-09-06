@@ -1,6 +1,6 @@
 ---
 name: rapid-spec
-description: Use when turning a request into a spec before implementation. Replaces superpowers' brainstorming with speed-first design that minimizes user questions, decides unilaterally, and records assumptions.
+description: Use when a request needs a spec before anything can be built, when requirements are vague and the instinct is to interview the user, or at the start of any hordev run
 ---
 
 # Rapid Spec: Design at Haiku Speed
@@ -38,10 +38,13 @@ these yourself and record them.
    changes).
 2. **Ask your 0-2 questions** (only if conditions above are met). Wait for
    answers.
-3. **Decide everything else.** For each unilateral choice, write one line in
-   the assumption ledger: `- [category] decision: reasoning.`
-4. **Write the spec artifact** (see format below) to the file path you
-   determine. It is short enough for one pass (~300-400 words total).
+3. **Decide everything else.** Record each unilateral choice as an entry in
+   `.hordev/assumptions.md`, using the entry format defined by
+   `assumption-ledger`. Do not invent a shorter format — `horde-qa` reads
+   those fields.
+4. **Write the spec artifact** (see format below) to
+   `.hordev/specs/<feature-name>.md`. It is short enough for one pass
+   (~300-400 words total).
 5. **Hand off.** Invoke `writing-tdds` with the spec path. Do NOT send the
    spec to the user for review or approval.
 
@@ -97,8 +100,8 @@ Example:
 
 Invoke the `writing-tdds` skill with:
 ```
-Spec: /path/to/spec.md
-Assumptions: /path/to/assumptions.md
+Spec: .hordev/specs/<feature-name>.md
+Assumptions: .hordev/assumptions.md
 ```
 
 The spec and ledger are your ONLY deliverable. Do NOT:

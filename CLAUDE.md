@@ -28,15 +28,47 @@ Two consequences shape every design decision here:
    approval checkpoint between design and build — the TDD is written and the horde starts.
    Correction comes from the running prototype and from QA, not from a review gate. When the
    spec is underdetermined, hordev picks, states the pick, and keeps moving.
+4. **hordev improves itself.** Runs append to `.hordev/run-log.md`; a `Stop` hook notices and
+   asks whether a skill should change. The bar is a repeated failure, never a one-off. A
+   lesson that stays in a session transcript was not learned.
+
+Breadth matters as much as speed. A horde is not just one design built faster — it is four
+plausible directions built at once so the user can see which one is right. Reach for the
+horde when the answer is genuinely unknown, not only when the work is large.
 
 hordev still produces TDDs and specs — it is not "skip the design." It produces them fast,
 from fewer questions, and treats them as living documents the prototype is allowed to correct.
 
+## Positioning: hordev is not a strict upgrade over superpowers
+
+Say this accurately in anything public. superpowers earns its keep on **structure,
+framework, spec-driven development, and autonomy** — long runs on well-understood work,
+inside a framework, with checkpoints you actually want. hordev gives some of that up on
+purpose.
+
+hordev's territory is **fast, broad prototyping**: the answer is not known yet, several
+approaches look plausible, and the cheapest way to learn is to have working versions in front
+of you. If the spec is already trusted, hordev's speed buys little and costs the checkpoints —
+that is a superpowers job. Never write marketing that frames superpowers as the inferior
+tool.
+
+## This is a public repository
+
+`https://github.com/heffrey/hordev`, MIT, public from day one. Strangers read this code.
+
+- No machine-specific paths, no personal references, no assumed local setup in any skill,
+  hook, or doc. Hooks resolve their own root from `CLAUDE_PLUGIN_ROOT`.
+- Several skills are adaptations of superpowers skills. Attribution stays in `LICENSE` and
+  `README.md`; keep it there.
+- Prose is read by humans and gets held to it: terse, concrete, no marketing voice, no
+  filler. Skills themselves are written for a model to follow, not for a human to admire.
+
 ## Status
 
-The repository is empty apart from this file. No source, no build tooling, no tests yet.
-Nothing below describes code that exists — it is the intended shape, derived from the
-superpowers plugin layout hordev replaces.
+Version 0.1.0. The plugin manifest, both hooks, and the skill library exist. There is no
+build step and no test suite yet — validation is currently reading the files and checking
+that hooks emit valid JSON. The library has not been run across enough real projects for its
+own self-improvement loop to have taught it anything.
 
 ## Target architecture
 

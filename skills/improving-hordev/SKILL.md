@@ -1,6 +1,6 @@
 ---
 name: improving-hordev
-description: Use when .hordev/run-log.md has new entries since last reflection.
+description: Use when a run has ended badly or surprisingly, when the same failure has appeared more than once, when .hordev/run-log.md has grown since the last reflection, or when asked to make hordev itself better
 ---
 
 # improving-hordev

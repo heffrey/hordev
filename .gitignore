@@ -1,0 +1,6 @@
+# Reflection bookkeeping written by hooks/reflect.sh. The run log and the
+# assumption ledger beside it are worth committing; this stamp file is not.
+.hordev/.reflected
+
+# Worktrees created by isolating-horde-workspaces during a run.
+.claude/worktrees/

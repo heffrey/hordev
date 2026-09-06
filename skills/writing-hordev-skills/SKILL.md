@@ -98,7 +98,9 @@ For discipline skills: Does a fresh model comply under pressure (time constraint
 
 ## Public Repository
 
-Hordev is open source. Skills are read by strangers. No machine-specific paths (`/Users/heffrey/`), personal references, or assumed local setup. Use relative paths or abstract examples.
+hordev is open source. Skills are read by strangers. No machine-specific paths
+(no `/Users/<name>/`, no `/home/<name>/`), no personal references, no assumed
+local setup. Use paths relative to the project root, or abstract examples.
 
 ## Word Count
 

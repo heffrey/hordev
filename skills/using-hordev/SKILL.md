@@ -56,10 +56,18 @@ empty, never to save time — each one is already sized for speed.
 5. **Verify** — `horde-qa`. The only thing standing between a wrong spec and a
    wrong prototype. Never skipped, never delegated to a cheap model.
 
+When the right approach is genuinely unknown, the horde goes wide instead of
+deep: `racing-prototypes` builds two to four competing versions at once and
+picks a winner on evidence. Breadth is half of hordev's bet, not a special case.
+
 Supporting skills, used at any stage:
 
 - `prototype-first` — keeping time-to-prototype the metric when a run starts
   drifting into polish.
+- `racing-prototypes` — building competing approaches in parallel and judging
+  them.
+- `debugging-in-a-horde` — debugging code that many agents wrote in parallel.
+- `isolating-horde-workspaces` — keeping a horde out of the user's checkout.
 - `assumption-ledger` — recording what you decided instead of asking.
 - `improving-hordev` — turning a failed run into a changed skill.
 - `writing-hordev-skills` — authoring or editing skills in this library.
@@ -90,13 +98,28 @@ These thoughts mean you have drifted back into interview mode:
 | "I'll use the strong model to be safe" | Volume work on an expensive model is the failure this library exists to prevent. |
 | "I'll note that lesson for next time" | Next time is a different session. `improving-hordev` or it never happened. |
 
+## Artifacts
+
+A run leaves these behind, in the project root:
+
+| Path | Written by | Contents |
+|---|---|---|
+| `.hordev/specs/<feature>.md` | `rapid-spec` | The spec |
+| `.hordev/tdds/<feature>.md` | `writing-tdds` | Test-driven design |
+| `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
+| `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
+
 ## Where hordev differs from superpowers
 
 hordev descends from superpowers and keeps its tenets: skills as version
 controlled markdown, tests before implementation, artifacts that outlive the
-session. It diverges on pacing. superpowers opens with a requirements interview
-and gates progress on user approval. hordev extracts less, decides more, and
-spends the saved time running agents in parallel.
+session. It diverges on pacing, and it is not a strict upgrade.
 
-If you want the interview, use superpowers. It is a good tool for a different
-bet.
+superpowers earns its keep on structure, framework, spec-driven development,
+and autonomy — long runs on well-understood work, inside a framework, with
+checkpoints you actually want. hordev's territory is fast, broad prototyping:
+the answer is not known yet, several approaches look plausible, and the
+cheapest way to learn is working versions of them.
+
+If the spec is already trusted, hordev's speed buys little and costs the
+checkpoints. That is a superpowers job. Say so.

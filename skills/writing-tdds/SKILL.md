@@ -1,6 +1,8 @@
 ---
 name: writing-tdds
-description: Use when you have a rapid-spec and need to hand off to the horde
+description: Use when a rapid-spec is complete and you need to
+  convert it to test-driven behavior contracts for parallel
+  implementation by multiple agents.
 ---
 
 # Writing TDDs (Test-Driven Designs)
@@ -19,12 +21,13 @@ forward.**
 
 ## TDD Artifact
 
-Save to: `path/to/feature-name.tdd.md`
+Save to: `.hordev/tdds/<feature-name>.md`
 
 ```markdown
 # Feature Name — TDD
 
-**Spec:** `path/to/spec.md` (link to the rapid-spec this designs)
+**Spec:** `.hordev/specs/<feature-name>.md` (link to the
+rapid-spec this designs)
 
 ## Scope & Constraints
 
@@ -68,195 +71,91 @@ def test_[behavior]():
 
 ## Tests Define Behavior
 
-Each test is a contract. A horde agent implementing this TDD receives:
-- The spec (for context)
-- This TDD (behavior definition)
-- No further guidance
-
-Write tests to make implementation unambiguous.
-
-**Good test:**
-```python
-def test_retry_stops_after_max_attempts():
-    attempts = []
-    def failing_op():
-        attempts.append(1)
-        raise ValueError("fail")
-    
-    with raises(ValueError):
-        retry(failing_op, max_attempts=3)
-    
-    assert len(attempts) == 3
-```
-Clear name, concrete inputs, one behavior.
-
-**Bad test:**
-```python
-def test_retry_works():
-    mock = MagicMock(side_effect=[Error(), Error(), "ok"])
-    result = retry(mock)
-    assert mock.call_count == 3
-```
-Name vague, tests mock not behavior, setup obscures intent.
+Each test is a contract for implementation. A horde agent receives
+the spec and this TDD — write tests to make behavior unambiguous.
+Good test names are specific (test_retry_stops_after_3_attempts, not
+test_retry_works). Concrete inputs, no mocks. One behavior per test.
 
 ## Parallel-Safe Tests
 
-Each test unit must be independently runnable and must not share mutable
-state with other tests. No fixtures two agents would both edit. No
-database state one test depends on another writing. No test
-interdependencies.
-
-**Write each test assuming it runs in isolation, in any order.**
-
-If you find yourself needing shared setup beyond read-only constants,
-refactor: extract what each test actually needs, put it in the test's
-own Given block.
+Each test must run independently in any order. No mutable shared state,
+no test interdependencies. If shared setup is needed beyond constants,
+move it into each test's Given block.
 
 ## Right-Sizing
 
-A TDD is done when a `haiku` agent can take any single test unit and
-implement it without rereading the spec or asking for clarification.
-
-- Each unit should fit in 50-100 lines of implementation code
-- Names and types must be exact (copy-paste safe for function names)
-- Input/output types must be unambiguous
-- Edge cases (empty input, null, boundaries) must be explicit in tests
-- "Handle errors" is not a test; "raises ValueError on negative input"
-  is
-
-If a test needs a paragraph of Given setup, the behavior is too coarse
-— split it.
+A TDD is done when a `haiku` agent can implement each test unit
+independently without rereading the spec. Each unit should fit in
+50-100 lines of code. Names and types must be exact. Edge cases must
+be explicit in tests, not in implementation notes. If setup needs
+a paragraph, the behavior is too coarse — split it.
 
 ## Handoff to Decomposing
 
-After the TDD is complete:
+After writing the TDD:
 
-1. Move to `decomposing-for-hordes`: it slices the TDD into
-   independent tasks, assigns one task per agent, and dispatches.
-2. Each task gets one or more test units to implement.
-3. Each agent pushes their implementation to a branch.
-4. Reconciliation collects implementations and verifies all tests pass.
+1. Move to `decomposing-for-hordes` — it slices the TDD into
+   independent tasks, assigns one per agent, and dispatches.
+2. Each agent implements their task units in parallel, pushes
+   to a branch.
+3. Reconciliation verifies all tests pass.
 
-**Do not pause here for approval. Do not ask the user to review the TDD
-before dispatch.**
+Do not pause for approval or ask the user to review before dispatch.
 
 ## Underdetermined Spec
 
-If the spec is ambiguous on a design point:
+If the spec is ambiguous, decide locally and log the assumption:
 
-1. **Decide locally.** Don't halt. What would a pragmatic implementation
-   do?
-2. **Document it.** Add a line to "Implementation Notes" with your
-   decision and rationale (one sentence).
-3. **Log the assumption.** Use `assumption-ledger`: create an entry with
-   the decision, why you picked it, where it matters, who should know.
-   Get its ID.
-4. **Reference it.** Link the ID in Implementation Notes.
-5. **Continue.** Write the test reflecting your decision.
+1. Append an entry to `.hordev/assumptions.md` with fields:
+   **ID, Decided, Rationale, Rejected, Blast radius, Falsified by,
+   Status** (see `assumption-ledger` skill for format)
 
-Example:
-```markdown
-## Implementation Notes
+2. Reference it in "Implementation Notes": "Decided X because Y.
+   See assumption-ledger entry ID-NNN."
 
-[Spec silent on retry delay. Decided: no delay, fail fast. This assumes
-caller handles backoff. See assumption-ledger entry AL-042.]
+3. Write the test reflecting your decision.
 
-[Setup: all tests use in-memory data; no DB fixtures.]
-```
-
-Use `assumption-ledger` when the decision will surprise implementers
-or commits to a path the spec could have closed. Don't log "I chose
-Python" — log "I used in-memory cache instead of Redis because spec
-said lightweight prototype."
+Log assumptions when the decision surprises implementers or commits
+to a closed path. Skip "I chose Python" — log design choices like
+"in-memory cache vs Redis for lightweight prototype."
 
 ## Example: Pagination TDD
 
 ```markdown
 # Pagination — TDD
 
-**Spec:** `features/pagination-api.md`
+**Spec:** `.hordev/specs/pagination.md`
 
-## Scope & Constraints
+Covers HTTP list endpoints with pagination (`limit` and `offset`
+params). Does NOT cover sorting or filtering.
 
-Covers HTTP list endpoints returning paginated results. Tests assume
-JSON responses. Does NOT cover sorting, filtering, or cursor types —
-those are separate features. Endpoint must support `limit` and `offset`
-query params.
+### Unit 1: Default Behavior
 
-## Tests
-
-### Unit 1: First Page Without Params
-
-Given: 100 items in store, endpoint `/items`
+Given: 100 items
 When: GET /items (no params)
-Then: returns first 10 items, status 200
+Then: returns 10 items (default limit), starting at 0
 
 ```python
-def test_first_page_default():
-    store = Store(items=[Item(i) for i in range(100)])
-    result = store.list()
-    assert len(result) == 10
-    assert result[0].id == 0
-    assert result[9].id == 9
+def test_default_page():
+    items = [Item(i) for i in range(100)]
+    result = list_items(items)
+    assert len(result) == 10 and result[0].id == 0
 ```
 
-### Unit 2: Offset Advances Page
+### Unit 2: Boundary Condition
 
-Given: 100 items, offset=20
-When: GET /items?offset=20
-Then: returns items 20-29
-
-```python
-def test_offset_skips_to_page():
-    store = Store(items=[Item(i) for i in range(100)])
-    result = store.list(offset=20)
-    assert result[0].id == 20
-    assert result[9].id == 29
-```
-
-### Unit 3: Limit Constrains Size
-
-Given: 100 items, limit=5
-When: GET /items?limit=5
-Then: returns exactly 5 items
-
-```python
-def test_limit_caps_results():
-    store = Store(items=[Item(i) for i in range(100)])
-    result = store.list(limit=5)
-    assert len(result) == 5
-```
-
-### Unit 4: Boundary — Past Last Item
-
-Given: 100 items, offset=95
+Given: 100 items, offset=95, limit=10
 When: GET /items?offset=95&limit=10
 Then: returns 5 items (95-99)
 
 ```python
-def test_offset_past_end_returns_tail():
-    store = Store(items=[Item(i) for i in range(100)])
-    result = store.list(offset=95, limit=10)
-    assert len(result) == 5
-```
-
-### Unit 5: Empty Request
-
-Given: 100 items, limit=0
-When: GET /items?limit=0
-Then: returns empty list
-
-```python
-def test_limit_zero_returns_empty():
-    store = Store(items=[Item(i) for i in range(100)])
-    result = store.list(limit=0)
-    assert len(result) == 0
+def test_past_end():
+    items = [Item(i) for i in range(100)]
+    result = list_items(items, offset=95, limit=10)
+    assert len(result) == 5 and result[0].id == 95
 ```
 
 ## Implementation Notes
 
-Spec says "sensible defaults." Decided: default limit=10, offset=0.
-This is standard REST convention.
-
-All tests use in-memory Store. Implement against interface, not DB.
+Decided: default limit=10, offset=0. Standard REST convention.
 ```
