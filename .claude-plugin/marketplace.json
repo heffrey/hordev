@@ -1,0 +1,22 @@
+{
+  "name": "hordev",
+  "description": "Marketplace for the hordev skills library",
+  "owner": {
+    "name": "Jeffrey Whiteside",
+    "url": "https://github.com/heffrey"
+  },
+  "plugins": [
+    {
+      "name": "hordev",
+      "description": "Skills library for Claude Code that trades interviewing for building: fast opinionated specs and TDDs, then parallel hordes of cheap agents driving to a running prototype",
+      "version": "0.1.0",
+      "source": "./",
+      "homepage": "https://github.com/heffrey/hordev",
+      "license": "MIT",
+      "author": {
+        "name": "Jeffrey Whiteside",
+        "url": "https://github.com/heffrey"
+      }
+    }
+  ]
+}

@@ -13,7 +13,7 @@ though it drops the interview.
 
 A worktree gives a line of work its own branch, its own history, and its own
 verifiable end state. That is what lets a spec stay attached to something
-real: this branch implements `.hordev/specs/<feature>.md`, these commits are
+real: this branch implements `.hordev/specs/<feature-name>.md`, these commits are
 its history, this diff is what `horde-qa` verified, and it can be thrown away
 whole if the spec was wrong. Without that, a horde's output is an undifferen-
 tiated pile of edits in one tree, and there is nothing to review, revert, or
@@ -97,7 +97,8 @@ git worktree remove "$AGENT_WORKTREE_2"
 # ... etc
 ```
 
-If a worktree has uncommitted work and you cannot lose it:
+If a worktree has uncommitted work and you cannot lose it, the orchestrator —
+never an agent — checkpoints it:
 ```bash
 cd "$WORKTREE_PATH"
 git add .

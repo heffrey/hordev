@@ -25,7 +25,8 @@ boundary, not inside either file.
 Before running tests, ask this sequence. It cuts wasted debugging time.
 
 1. **Is it a skipped task?**
-   - Check `.hordev/tasks.md`: did an agent mark this done when it wasn't?
+   - Check the TDD's test cases for this unit: did an agent report done
+     without satisfying them?
    - Search the owning agent's file: does the code for this feature exist?
    - **If skipped:** dispatch the agent to do the work (don't fix).
 

@@ -104,8 +104,8 @@ A run leaves these behind, in the project root:
 
 | Path | Written by | Contents |
 |---|---|---|
-| `.hordev/specs/<feature>.md` | `rapid-spec` | The spec |
-| `.hordev/tdds/<feature>.md` | `writing-tdds` | Test-driven design |
+| `.hordev/specs/<feature-name>.md` | `rapid-spec` | The spec |
+| `.hordev/tdds/<feature-name>.md` | `writing-tdds` | Test-driven design |
 | `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
 | `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
 

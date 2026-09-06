@@ -82,15 +82,18 @@ code mean the dispatch prompt contract is weak.
 
 ## Install
 
-```
-/plugin install hordev@https://github.com/heffrey/hordev
-```
-
-Or clone it and point Claude Code at the checkout:
+In Claude Code, add this repository as a plugin marketplace, then install from
+it:
 
 ```
-git clone https://github.com/heffrey/hordev
+/plugin marketplace add heffrey/hordev
+/plugin install hordev@hordev
 ```
+
+The entrypoint skill loads itself at session start, so there is nothing else to
+configure. Restart the session after installing.
+
+Requires `bash` and `python3` on PATH — both hooks use them.
 
 ## Status
 

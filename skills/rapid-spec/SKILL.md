@@ -50,7 +50,7 @@ these yourself and record them.
 
 ## Spec Artifact Format
 
-Path: `.claude/specs/[YYYYMMDD]-[slug].md`
+Path: `.hordev/specs/<feature-name>.md`
 
 Sections (in order):
 - **Goal** (1 sentence): What does this build? Who uses it?
@@ -69,32 +69,17 @@ project context; don't explain the whole codebase.
 
 ## Assumption Ledger
 
-Write one file: `.claude/assumptions/[spec-slug]-assumptions.md`
+Append every unilateral decision to `.hordev/assumptions.md`.
 
-Format:
-```
-# Assumptions for [Spec Slug]
+`assumption-ledger` owns that file's format and lifecycle — read it and follow
+it exactly. Do not invent a shorter variant here: `horde-qa` targets its
+inspection using the `Blast radius` and `Status` fields, and `writing-tdds`
+appends to the same file. A second format silently breaks both.
 
-[Brief statement of the request, to orient later readers]
-
-## Decisions Made Unilaterally
-
-- [category] **decision**: reasoning. (link to spec section if relevant)
-- [category] **decision**: reasoning.
-```
-
-Categories: architecture, naming, scope, ui/ux, performance, testing,
-libraries, defaults, ordering.
-
-Example:
-```
-- naming **API route is /api/posts/batch**: singular "post" for single
-  resource, plural "posts" for bulk; POST method. (See spec: Main flow)
-- scope **Pagination starts at v2**: v1 assumes small dataset; added to
-  assumptions for future. (See spec: Core scope)
-- libraries **Use node:crypto, not tweetnacl**: stdlib is faster, audited
-  by Node team, no extra deps. (See spec: Data shape)
-```
+What earns an entry: a decision a reasonable user might have answered
+differently, where the different answer would change the build. Architecture,
+data shape, scope boundaries, and dependency choices qualify. Naming and
+formatting do not — a ledger nobody reads is worse than no ledger.
 
 ## Handoff to writing-tdds
 
