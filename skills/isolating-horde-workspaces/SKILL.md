@@ -5,6 +5,27 @@ description: Use when setting up a horde run to establish isolation and prevent 
 
 # Isolating Horde Workspaces
 
+## Why Worktrees Carry More Weight Here Than You Think
+
+Worktrees are not just collision avoidance. They are what keeps spec-driven
+development honest under parallelism, and hordev keeps the SDD tenets even
+though it drops the interview.
+
+A worktree gives a line of work its own branch, its own history, and its own
+verifiable end state. That is what lets a spec stay attached to something
+real: this branch implements `.hordev/specs/<feature>.md`, these commits are
+its history, this diff is what `horde-qa` verified, and it can be thrown away
+whole if the spec was wrong. Without that, a horde's output is an undifferen-
+tiated pile of edits in one tree, and there is nothing to review, revert, or
+compare — the spec becomes a document nobody can check the code against.
+
+**The unit of isolation is a track of work, not an agent.** One worktree per
+spec being implemented. Agents inside a track share it and stay out of each
+other's way through file ownership. This is the rule that decides everything
+below.
+
+Never run a horde in the user's checkout, and never on the default branch.
+
 ## Default: One Shared Worktree with File Ownership
 
 **Use this for most hordes.** Create one worktree for the entire horde. Agents coordinate via file ownership assigned in `decomposing-for-hordes`: each file belongs to exactly one agent. Why: Process isolation per agent wastes merging overhead when agents do not actually collide. Ownership suffices when files are disjoint.
@@ -24,6 +45,9 @@ All agents in this run work in `$HORDE_ROOT`. Their ownership is enforced by the
 ## Per-Agent Isolation: When and How
 
 Create separate worktrees only when agents will:
+- **Race competing prototypes** (`racing-prototypes`). Mandatory, not optional:
+  each candidate is a separate track of work with its own branch, so the
+  candidates can be compared as diffs and the losers deleted whole.
 - **Run conflicting servers or builds** (e.g., two agents binding port 3000, or simultaneous cargo builds)
 - **Perform destructive or rollback-heavy experiments** (migrations, large deletions, repo rewriting)
 - **Do speculative work you expect to discard** (prove feasibility, then decide)
@@ -43,7 +67,7 @@ Ownership does not prevent these:
 
 | Hazard | Agents Affected | Mitigation |
 |--------|-----------------|-----------|
-| Git index (.git/index) | All in one worktree | Commit frequently; never `git add .` across all files. Each agent stages only its own. |
+| Git index (.git/index) | All in one worktree | Agents do not run git at all. The orchestrator commits, once the tree is coherent — see `dispatching-hordes`. A worktree has one index, and file ownership does not protect it. |
 | Lockfiles (package-lock.json, Cargo.lock, poetry.lock) | All | `decomposing-for-hordes` must assign lockfile ownership to ONE agent. Others use `--locked` or equivalent to freeze. |
 | Generated artifacts (dist/, build/, __pycache__) | All | Assign to worktree owner. Add to .gitignore if not tracked. |
 | Dependency caches (node_modules/, target/) | All | One agent installs; others skip or use read-only cached versions. |

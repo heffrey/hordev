@@ -55,6 +55,24 @@ COST: one-off
 RULE:
 ---
 
+EVENT: isolating-horde-workspaces told agents to stage and commit their own
+work, contradicting the rule just added to dispatching-hordes. Second
+appearance of the same commit-ownership defect, so it clears the repeat bar.
+Both skills now say agents do not run git and the orchestrator commits.
+SKILL: decomposing-for-hordes
+COST: systemic (2 times)
+RULE: When two skills describe the same shared resource, one of them owns the
+rule and the other links to it. Never state it twice.
+---
+
+EVENT: Worktree isolation was framed only as collision avoidance. It is also
+what keeps a spec attached to a reviewable, revertible branch, which is the
+SDD tenet hordev keeps. The unit of isolation is a track of work, not an agent.
+SKILL: isolating-horde-workspaces
+COST: one-off
+RULE:
+---
+
 EVENT: Hook end-to-end execution could not be verified in the authoring
 session; the sandbox refused to run the scripts. Verified by syntax check and
 by validating the JSON payload shape separately. Still unproven in a live

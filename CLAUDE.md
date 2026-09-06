@@ -135,6 +135,19 @@ decides:
 Skills that dispatch agents should set `model` explicitly rather than inheriting a default,
 so the split holds no matter what the session is configured with.
 
+## Worktrees are load-bearing
+
+hordev drops superpowers' interview, not its spec-driven tenets, and worktrees are what keep
+those tenets honest under parallelism. A worktree gives a track of work its own branch,
+history, and verifiable end state — which is what lets a spec stay attached to something a
+human can review, revert, or compare. Without it a horde's output is an undifferentiated pile
+of edits and the spec becomes uncheckable.
+
+The unit of isolation is a **track of work, not an agent**: one worktree per spec, with file
+ownership separating agents inside it. Racing candidates are the exception that always get one
+each. `isolating-horde-workspaces` owns these rules; other skills link to it rather than
+restating them.
+
 ## Conventions
 
 - Skill descriptions are trigger conditions, not summaries. Write them so a model can match a
