@@ -1,0 +1,14 @@
+{
+  "name": "hordev",
+  "description": "Skills library for Claude Code that trades interviewing for building: fast opinionated specs and TDDs, then parallel hordes of cheap agents driving to a running prototype",
+  "version": "0.1.0",
+  "license": "MIT",
+  "keywords": [
+    "skills",
+    "parallel-agents",
+    "prototyping",
+    "tdd",
+    "spec",
+    "orchestration"
+  ]
+}
