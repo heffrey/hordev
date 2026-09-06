@@ -2,7 +2,7 @@
 
 ![A horde of orcs and goblins swarming over a half-built structure, hauling beams
 up scaffolding and hammering joists, while one larger orc foreman stands apart in
-the foreground reading a plan](assets/hordev-horde.png)
+the foreground reading a plan](assets/hordev-horde.webp)
 
 A skills library for [Claude Code](https://claude.com/claude-code) that trades
 interviewing for building.
@@ -41,7 +41,7 @@ Every hordev run moves through five stages:
 ![Five stages left to right - Extract, Design, Cut, Swarm, Verify - colored by
 model, with a single arrow fanning out into a dozen parallel agents and
 converging again before Verify. Caption: haiku does the volume, opus does the
-judgment](assets/five-stage-run.png)
+judgment](assets/five-stage-run.webp)
 
 | Stage | Skill | Model |
 |---|---|---|
@@ -59,7 +59,7 @@ evidence from running code.
 ![One spec and TDD splitting into three identical candidate lanes, each in its
 own worktree, meeting a line labelled "judged on running code" - one continues as
 the winner, the other two continue as dashed lines labelled "kept". Caption:
-losing branches stay until you have seen them](assets/racing-prototypes.png)
+losing branches stay until you have seen them](assets/racing-prototypes.webp)
 
 Supporting skills: `prototype-first`, `racing-prototypes`, `assumption-ledger`,
 `debugging-in-a-horde`, `isolating-horde-workspaces`, `improving-hordev`,
@@ -89,7 +89,7 @@ of a horde.
 
 ![A four-step cycle - run, log, diagnose, amend - with a Stop hook prompting the
 move from log to diagnose, and a red gate blocking the return from amend labelled
-"repeated failure only, never a one-off"](assets/self-improvement-loop.png)
+"repeated failure only, never a one-off"](assets/self-improvement-loop.webp)
 
 Runs append to `.hordev/run-log.md`. A `Stop` hook notices when the log has
 grown and asks whether anything should change a skill. The bar is deliberately
