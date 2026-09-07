@@ -123,7 +123,7 @@ Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.1.0.
+Early. Version 0.2.0.
 
 The skills are written. Both hooks run correctly when executed directly —
 `session-start.sh` emits the entrypoint as valid JSON, and `reflect.sh` blocks
