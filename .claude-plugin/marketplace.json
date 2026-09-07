@@ -9,7 +9,7 @@
     {
       "name": "hordev",
       "description": "Skills library for Claude Code that trades interviewing for building: fast opinionated specs and TDDs, then parallel hordes of cheap agents driving to a running prototype",
-      "version": "0.1.0",
+      "version": "0.2.0",
       "category": "development",
       "source": "./",
       "homepage": "https://github.com/heffrey/hordev",
