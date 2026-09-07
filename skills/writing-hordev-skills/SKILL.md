@@ -84,7 +84,25 @@ What breaks + fixes.
 
 ## Red Flags
 Signs you are about to violate the skill (discipline skills only).
+
+## Battle cry
+The orcish line that fits this skill's moment, and when it earns saying.
 ```
+
+## Battle Cries
+
+Every skill ends with one, because hordev is a horde and sounds like one. Pick a
+line that matches the moment the skill owns — the peon lines for accepting and
+grinding, the grunt lines for dispatch and combat, a blessing for a clean finish
+— and say when it earns saying. A cry that could sit at the end of any skill is
+the wrong cry.
+
+Name the moment it does **not** apply, too. Skills that report failures (`horde-qa`
+on a red run, `debugging-in-a-horde` mid-hunt, `assumption-ledger` on a falsified
+assumption) must say so explicitly, or the line lands on top of bad news.
+
+Do not invent a new bank. Draw from `using-hordev` § Voice, and add a line there
+first if the moment genuinely has no cry.
 
 ## Testing Your Skill
 
@@ -116,3 +134,10 @@ Target <200 lines. Concrete examples and decision rules are good; explanation an
 | "I'm extending an existing skill" | Test the full skill afterward. Changes can break old scenarios. |
 | "Editing is too risky" | Untested edits are riskier. Test the failure, make the change, re-test. |
 
+## Battle cry
+
+"Zug zug." — when a new skill is written and its scenarios pass.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

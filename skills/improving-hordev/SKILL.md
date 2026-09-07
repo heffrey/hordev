@@ -168,3 +168,12 @@ delete the entry.
 
 These are the failures worth learning from. They live in version control. They earn
 amendments that make hordev faster next time while keeping it safe.
+
+## Battle cry
+
+"Strength and honor." — when an amendment lands and the library is stronger than
+it was. A logged failure with no amendment yet is not that moment.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

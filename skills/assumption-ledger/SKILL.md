@@ -170,3 +170,12 @@ intended behavior.
 ✗ Whitespace or typography
 ✗ Ordinary naming of functions, variables, or files
 ✗ Choice between two equivalent implementations (if the user wouldn't care)
+
+## Battle cry
+
+"Work, work." — when logging a decision you made instead of asking. An
+assumption falsified with real blast radius gets none: say that one straight.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

@@ -110,3 +110,12 @@ whenever a cut you made turns out wrong: two agents needed the same file, a
 task was too large for one agent, or a dependency you missed forced a wave to
 be redone. Decomposition failures surface late, so they are easy to forget by
 the time they hurt.
+
+## Battle cry
+
+"Swobu." — *as you command*, when the cut is made and no two tasks want the
+same file.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

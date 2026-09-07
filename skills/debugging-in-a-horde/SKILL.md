@@ -162,3 +162,12 @@ Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
 when a bug class repeats across runs — the same seam breaking, the same kind of
 fake test. A recurring bug means a skill is under-specified, not that the code
 was unlucky.
+
+## Battle cry
+
+"Blood and thunder!" — when you find the seam. Not while you are still hunting,
+and never stacked on top of the bug report itself.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

@@ -102,3 +102,12 @@ If the answer is "ship," the prototype has done its job and hordev is the wrong
 tool for what comes next. Hardening is well-understood work against a spec you
 now trust — exactly the case where structure beats speed. Hand the branch over
 and say so plainly. Do not let a prototype drift into production by accretion.
+
+## Battle cry
+
+"Me not that kind of orc!" — when the ask has drifted into hardening and hordev
+is the wrong tool. Say the line, then hand the branch over plainly.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

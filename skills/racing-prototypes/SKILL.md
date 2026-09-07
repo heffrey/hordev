@@ -107,3 +107,12 @@ Show the user:
 | Favorite gets extra help | One candidate got more tokens, a head-start, or looser spec interpretation | Restart with fair rules or commit |
 | Judging on aesthetics | Picking based on "this code is cleaner" or "I like this design better" | Re-judge on the criteria you wrote down. If criteria don't exist, the race was not fair |
 | All succeed equally | Every candidate passed every test with no differentiation | The axes were not real. Commit to whichever is simplest or pick one. |
+
+## Battle cry
+
+"Victory or death!" — when the candidates launch. Every loser gets deleted;
+that is the bargain the line is describing.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

@@ -159,3 +159,12 @@ def test_past_end():
 
 Decided: default limit=10, offset=0. Standard REST convention.
 ```
+
+## Battle cry
+
+"Dabu." — *I obey*. The TDD goes to the horde without a sign-off; that is the
+whole point of the stage.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

@@ -185,3 +185,12 @@ for every defect that escaped reconciliation, every assumption falsified here,
 and every case where the TDD itself was wrong. These are the entries that
 matter most: they are where hordev's speed bet lost, and they are exactly what
 the library needs to learn from rather than quietly delete.
+
+## Battle cry
+
+"Lok'tar!" — **only when QA passes.** A failing report gets no flavor at all:
+it is the one moment in the run where the user has to act on what you found.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

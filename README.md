@@ -98,6 +98,14 @@ symptoms back to the skill that probably needs the edit — seam bugs usually
 mean the decomposition rules are too loose, agents returning plans instead of
 code mean the dispatch prompt contract is weak.
 
+### It talks like a horde
+
+The skills drop the occasional orcish line — "Zug zug" taking the job, "For the
+Horde!" when a wave dispatches, "Work complete!" when the tree comes back
+together. It is a running joke with rules: conversational output only, never two
+messages in a row, and never on top of bad news. Specs, TDDs, commit messages,
+and QA findings stay clean, because those outlive the joke.
+
 ## Install
 
 In Claude Code, add this repository as a plugin marketplace, then install from

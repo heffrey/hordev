@@ -193,3 +193,12 @@ BLOCKED, or has to be re-dispatched. Note the re-dispatch rate for the run.
 
 Nothing else writes this. If you skip it, `improving-hordev` has nothing to
 learn from and the library stops improving.
+
+## Battle cry
+
+"For the Horde!" — when the wave goes out. "Lok'tar ogar!" and "Blood and
+thunder!" serve the same moment.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

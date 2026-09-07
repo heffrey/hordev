@@ -125,3 +125,11 @@ The spec and ledger are your ONLY deliverable. Do NOT:
 | "This is tricky, I should ask for clarification" | Tricky means you decide, test, and fix. Ask only if reversing costs too much. |
 | "Should I add a question about Y?" | If you have time to ask, you have time to decide. Decide. |
 | "They might want Z later" | Might is a guess. You record it in assumptions; TDD flushes it. |
+
+## Battle cry
+
+"Work, work." — when the spec is written and nobody got interviewed.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

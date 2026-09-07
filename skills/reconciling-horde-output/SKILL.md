@@ -126,3 +126,12 @@ Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
 for every seam collision, duplicated helper, and silently stubbed task you find.
 Mark `COST: systemic` when the same class appeared in an earlier run — that is
 what clears the amendment bar.
+
+## Battle cry
+
+"Work complete!" — when the tree is coherent and the seams hold. Not before,
+and not instead of checking.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.

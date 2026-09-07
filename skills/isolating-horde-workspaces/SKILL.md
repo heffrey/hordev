@@ -131,3 +131,12 @@ git log --oneline -1  # Note the SHA
 2. **During dispatch:** Each agent receives its worktree path. Agents work only in that tree; cross-tree reads/writes are errors.
 3. **After `horde-qa` passes:** Tear down worktrees. Verify all branches pushed (if a remote exists) or at least committed.
 4. **Finish:** Return to the user's original checkout. It is untouched.
+
+## Battle cry
+
+"Zug zug." — when the worktree is up and the horde is off the user's checkout.
+Teardown gets nothing; it is bookkeeping.
+
+Once, at that moment — not every message, and never two messages running. Full
+rules in `using-hordev` § Voice: conversational output only, never in artifacts,
+never on bad news.
