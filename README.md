@@ -100,6 +100,10 @@ code mean the dispatch prompt contract is weak.
 
 ### It talks like a horde
 
+![A Claude Code session - the user ends a feature request with "for the horde!",
+and Claude answers "For the horde!" before loading the using-hordev skill and
+starting work](assets/hordev-voice.webp)
+
 The skills drop the occasional orcish line — "Zug zug" taking the job, "For the
 Horde!" when a wave dispatches, "Work complete!" when the tree comes back
 together. It is a running joke with rules: conversational output only, never two
