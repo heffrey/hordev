@@ -94,7 +94,7 @@ orc laughing.
 
 ## The run
 
-A hordev run moves through five stages. Skip a stage only when it is genuinely
+A hordev run moves through six stages. Skip a stage only when it is genuinely
 empty, never to save time — each one is already sized for speed.
 
 1. **Extract** — `rapid-spec`. Pull the minimum from the user, decide the rest,
@@ -107,6 +107,10 @@ empty, never to save time — each one is already sized for speed.
    then merge what comes back.
 5. **Verify** — `horde-qa`. The only thing standing between a wrong spec and a
    wrong prototype. Never skipped, never delegated to a cheap model.
+6. **Reflect** — `improving-hordev`, dispatched automatically once Verify
+   passes. It reads `.hordev/run-log.md`, tallies repeats, and writes proposed
+   amendments. It does not edit skills; you do. Automatic because a reflection
+   that depends on someone remembering to ask for it does not happen.
 
 ## Who runs what
 
@@ -130,6 +134,12 @@ and cannot hand off to the next stage. So:
 4. **Swarm.** You dispatch the horde, then run `reconciling-horde-output`
    yourself when it returns.
 5. **Verify.** You run `horde-qa` yourself.
+6. **Reflect.** Dispatch one `sonnet` agent with the `improving-hordev` skill
+   text and the path to `.hordev/run-log.md`. It returns a path to
+   `.hordev/proposed-amendments.md`. It may not edit a skill — that is yours,
+   and it is the one guardrail against hordev quietly rewriting itself. Sonnet
+   rather than opus because the output is a proposal you read before applying;
+   a wrong tally costs a read, not a corrupted library.
 
 If a stage's agent returns something unusable, re-dispatch a fresh agent with an
 amended prompt. There is no resuming a finished agent — it has no context left
@@ -146,6 +156,12 @@ what was decided for them:
 - The branch the work is on, so they can review or discard it whole.
 
 Do not merge or delete the branch yourself. Hand it over.
+
+Then dispatch Reflect. It runs after the report, not before — the user gets
+their answer first, and the reflection lands as a separate, smaller message
+naming what repeated and what it proposes. If nothing repeated, it says so in
+one line and proposes nothing; a run that only failed in new ways has not
+earned an amendment.
 
 ## Going wide
 
@@ -210,6 +226,7 @@ A run leaves these behind, in the project root:
 | `.hordev/tdds/<feature-name>.md` | `writing-tdds` | Test-driven design |
 | `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
 | `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
+| `.hordev/proposed-amendments.md` | `improving-hordev` | Amendments the Reflect stage proposes; the orchestrator applies or declines |
 
 ## Where hordev differs from superpowers
 

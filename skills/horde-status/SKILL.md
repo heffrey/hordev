@@ -9,7 +9,7 @@ description: Use when asked where a hordev run stands - "where are we", "what's 
 
 A horde-status report is **a stage pipeline, a task table, a live agent roster, and the assumption ledger** — in that order. It answers four questions a generic status report cannot:
 
-1. Which of the five stages is the run in?
+1. Which of the six stages is the run in?
 2. Which agents are out right now, on what model, owning which files?
 3. What was decided **without asking**, and is any of it falsified?
 4. Has `horde-qa` run — because nothing is done before it has.
@@ -41,13 +41,15 @@ If the run is **not** isolated in a worktree, say so here and say it loudly. A h
 
 ### 2. Stage pipeline
 
-The five stages, with the current one marked. One line.
+The six stages, with the current one marked. One line.
 
 ```
-Extract ✓ → Design ✓ → Cut ✓ → Swarm ◈ → Verify ○
+Extract ✓ → Design ✓ → Cut ✓ → Swarm ◈ → Verify ○ → Reflect ○
 ```
 
 `✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. Never mark Verify `✓` on the horde's own say-so.
+
+Reflect is the automatic post-run stage: a sonnet agent reads the run log and proposes amendments. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
 
 ### 3. Task table
 

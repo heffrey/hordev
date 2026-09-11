@@ -36,12 +36,16 @@ and costs you the checkpoints. Use superpowers.
 
 ## How it works
 
-Every hordev run moves through five stages:
+Every hordev run moves through six stages:
 
 ![Five stages left to right - Extract, Design, Cut, Swarm, Verify - colored by
 model, with a single arrow fanning out into a dozen parallel agents and
 converging again before Verify. Caption: haiku does the volume, opus does the
 judgment](assets/five-stage-run.webp)
+
+*(The diagram predates the Reflect stage and shows the first five. Reflect runs
+after Verify: one sonnet agent reads the run log and proposes amendments, and
+never edits a skill itself.)*
 
 | Stage | Skill | Model |
 |---|---|---|
@@ -50,6 +54,7 @@ judgment](assets/five-stage-run.webp)
 | Cut | `decomposing-for-hordes` | opus |
 | Swarm | `dispatching-hordes`, `reconciling-horde-output` | haiku fan-out, opus merge |
 | Verify | `horde-qa` | opus |
+| Reflect | `improving-hordev` | sonnet |
 
 When the right approach is genuinely unknown, the horde goes wide instead of
 deep: `racing-prototypes` builds two to four competing versions at once, under

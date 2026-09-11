@@ -1,7 +1,7 @@
 {
   "name": "hordev",
   "description": "Skills library for Claude Code that trades interviewing for building: fast opinionated specs and TDDs, then parallel hordes of cheap agents driving to a running prototype",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "author": {
     "name": "Jeffrey Whiteside",
     "url": "https://github.com/heffrey"

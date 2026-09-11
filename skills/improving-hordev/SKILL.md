@@ -96,6 +96,23 @@ under-specified:
 | Same off-by-one bug in 2 agents | horde-qa | Missing test category; error path untested |
 | Defect escaped to integration test | horde-qa | QA checklist incomplete or not enforced |
 
+## Two jobs, two owners
+
+This skill does two separable things, and only one of them is dangerous.
+
+**Analyse and propose** — read `.hordev/run-log.md`, count occurrences per
+skill, apply the amendment bar, and draft the exact text to insert and where.
+Bounded, mechanical, and touches no skill file. This is the **Reflect** stage in
+`using-hordev`: dispatched automatically after Verify passes, on `sonnet`, with
+`.hordev/proposed-amendments.md` as its only output.
+
+**Amend and commit** — edit a `SKILL.md` and put it in version control.
+Orchestrator only, always. A library that edits itself through an agent nobody
+reviewed is not self-improving, it is drifting.
+
+A Reflect agent that returns "nothing repeated; no amendment earned" has done
+its job. Repetition is the bar, and most runs will not clear it.
+
 ## How to amend a skill
 
 1. **Diagnosis first.** Read the COST field. If one-off, skip steps 2–5.
@@ -154,7 +171,11 @@ NEW:
 ## Guardrails against runaway self-modification
 
 - **No mid-run edits.** Finish the current run. Log the failure. Amend next cycle.
-- **No subagent edits.** Only the main agent edits skills. Subagents log; orchestrator amends.
+- **No subagent edits.** Only the main agent edits skills. A subagent may read
+  the log, tally repeats and draft amendment text — that is the Reflect stage
+  and it is automatic. It may not touch a `SKILL.md`. The orchestrator applies
+  what it proposes, or declines to. This is the boundary that keeps hordev from
+  rewriting itself while nobody is reading.
 - **Version control only.** All edits in git. No hidden tweaks.
 - **Do not overfit.** Wait for repetition (2+ times) before amending.
 - **Skill bloat detection.** If a skill grows > 20 rules, it is overfit. Rewrite instead.

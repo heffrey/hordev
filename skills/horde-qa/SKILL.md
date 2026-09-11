@@ -193,7 +193,9 @@ When you see a pattern (not one-off bug):
 Log it to `.hordev/run-log.md` with `COST: systemic`: what pattern, which
 agents, which files, and the hypothesis about why it happened (spec unclear?
 TDD bad? agents coordinating wrong?). `improving-hordev` reads that log after
-the run ends — do not dispatch it, and do not edit a skill mid-run.
+the run ends. Do not edit a skill mid-run, and do not amend one yourself.
+Dispatching the **Reflect** stage after your report is now the orchestrator's
+job (see `using-hordev`); what it returns is a proposal, not a change.
 
 Do NOT leave systemic issues unreported. They will cascade to next horde run.
 
