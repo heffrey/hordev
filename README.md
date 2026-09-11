@@ -38,14 +38,11 @@ and costs you the checkpoints. Use superpowers.
 
 Every hordev run moves through six stages:
 
-![Five stages left to right - Extract, Design, Cut, Swarm, Verify - colored by
-model, with a single arrow fanning out into a dozen parallel agents and
-converging again before Verify. Caption: haiku does the volume, opus does the
-judgment](assets/five-stage-run.webp)
-
-*(The diagram predates the Reflect stage and shows the first five. Reflect runs
-after Verify: one sonnet agent reads the run log and proposes amendments, and
-never edits a skill itself.)*
+![Six stages left to right - Extract, Design, Cut, Swarm, Verify, Reflect -
+coloured by model: amber for haiku, indigo for opus, teal for sonnet. Swarm is
+split amber-to-indigo. Between Cut and Swarm a single arrow fans out into
+sixteen parallel agents and converges again. Caption: haiku does the volume,
+opus does the judgment, sonnet reflects](assets/six-stage-run.webp)
 
 | Stage | Skill | Model |
 |---|---|---|
