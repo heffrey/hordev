@@ -62,8 +62,8 @@ the winner, the other two continue as dashed lines labelled "kept". Caption:
 losing branches stay until you have seen them](assets/racing-prototypes.webp)
 
 Supporting skills: `prototype-first`, `racing-prototypes`, `assumption-ledger`,
-`debugging-in-a-horde`, `isolating-horde-workspaces`, `improving-hordev`,
-`writing-hordev-skills`. `using-hordev` is the entrypoint, injected at session
+`horde-status`, `debugging-in-a-horde`, `isolating-horde-workspaces`,
+`improving-hordev`, `writing-hordev-skills`. `using-hordev` is the entrypoint, injected at session
 start by a hook.
 
 ### The three decisions that define it
@@ -127,7 +127,7 @@ Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.2.1.
+Early. Version 0.3.0.
 
 The skills are written. Both hooks run correctly when executed directly —
 `session-start.sh` emits the entrypoint as valid JSON, and `reflect.sh` blocks

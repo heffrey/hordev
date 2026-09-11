@@ -167,6 +167,8 @@ Supporting skills, used at any stage:
 - `debugging-in-a-horde` — debugging code that many agents wrote in parallel.
 - `isolating-horde-workspaces` — keeping a horde out of the user's checkout.
 - `assumption-ledger` — recording what you decided instead of asking.
+- `horde-status` — reporting where a run stands: stage, agents in flight,
+  and the ledger the user never approved.
 - `improving-hordev` — turning a failed run into a changed skill.
 - `writing-hordev-skills` — authoring or editing skills in this library.
 
