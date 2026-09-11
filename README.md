@@ -129,17 +129,18 @@ Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.3.0.
+Early. Version 0.5.0.
 
-The skills are written. Both hooks run correctly when executed directly —
-`session-start.sh` emits the entrypoint as valid JSON, and `reflect.sh` blocks
-once when the run log grows, honors the `stop_hook_active` loop guard, and
-stays silent afterward. They have not yet been exercised inside a live Claude
-Code session, which is a different thing and the next thing to verify.
+The skills are written, and both hooks now run inside live Claude Code
+sessions: `session-start.sh` injects the entrypoint skill at startup, and
+`reflect.sh` blocks once on Stop when the run log has grown, then stays silent
+behind its `stop_hook_active` guard and its `.hordev/.reflected` stamp.
 
-The library has not been run in anger across enough projects for its own
-self-improvement loop to have taught it anything. Expect rough edges, and
-expect these rules to change as real runs falsify them.
+The self-improvement loop has closed at least once on its own output — the
+amendments in 0.4.0 came out of a run logged in `.hordev/run-log.md` — but the
+library still has not been run across enough different projects to have learned
+much. Expect rough edges, and expect these rules to change as real runs
+falsify them.
 
 ## License
 

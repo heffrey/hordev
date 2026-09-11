@@ -65,10 +65,16 @@ tool.
 
 ## Status
 
-Version 0.3.0. The plugin manifest, both hooks, and the skill library exist. There is no
+Version 0.5.0. The plugin manifest, both hooks, and the skill library exist. There is no
 build step and no test suite yet — validation is currently reading the files and checking
-that hooks emit valid JSON. The library has not been run across enough real projects for its
-own self-improvement loop to have taught it anything.
+that hooks emit valid JSON. Both hooks have now fired in live sessions.
+
+The self-improvement loop has produced one round of amendments (0.4.0, from the run logged
+in `.hordev/run-log.md`), but the library has not been run across enough different projects
+to have learned much yet. Release hygiene is the known weak spot: the version string lives
+in four places (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `CLAUDE.md`,
+`README.md`) and drifted twice when only the first was bumped. `marketplace.json` is the one
+installs actually read, so it is the one that must never be stale.
 
 ## Target architecture
 
@@ -115,6 +121,11 @@ hordev is not a rename of that set. The divergences that define the project:
   independent, and a merge/reconcile story for their output.
 - Verification has to survive that fan-out: many agents producing work concurrently need
   cheaper, more automatic checking than a sequential workflow does.
+- Reflection is a stage of the run, not a thing the user remembers to ask for.
+  `improving-hordev` is the sixth stage, triggered by the `Stop` hook rather than by
+  judgment, because reflection that depends on an agent choosing to reflect does not happen.
+- `horde-status` reports a run against hordev's own six stages, so "where are we" has one
+  answer shaped like the pipeline instead of a narrative summary.
 
 ## Model assignment
 
