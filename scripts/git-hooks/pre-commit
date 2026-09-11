@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Refuses a commit whose version strings disagree.
+#
+# Enable in a fresh clone with:
+#   git config core.hooksPath scripts/git-hooks
+#
+# Only runs when a versioned file is actually staged, so ordinary commits pay
+# nothing. Bypass with --no-verify if you are mid-bump on purpose.
+set -uo pipefail
+
+root=$(git rev-parse --show-toplevel) || exit 0
+
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+case "$staged" in
+  *.claude-plugin/plugin.json* | *.claude-plugin/marketplace.json* \
+  | *CLAUDE.md* | *README.md* ) ;;
+  *) exit 0 ;;
+esac
+
+if ! out=$("$root/scripts/version.sh" 2>&1); then
+  printf '%s\n\n' "$out" >&2
+  printf 'pre-commit: version strings disagree, commit refused.\n' >&2
+  printf '  Fix with: scripts/version.sh <version>\n' >&2
+  printf '  Bypass with: git commit --no-verify\n' >&2
+  exit 1
+fi
+exit 0

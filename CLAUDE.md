@@ -71,10 +71,32 @@ that hooks emit valid JSON. Both hooks have now fired in live sessions.
 
 The self-improvement loop has produced one round of amendments (0.4.0, from the run logged
 in `.hordev/run-log.md`), but the library has not been run across enough different projects
-to have learned much yet. Release hygiene is the known weak spot: the version string lives
-in four places (`.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `CLAUDE.md`,
-`README.md`) and drifted twice when only the first was bumped. `marketplace.json` is the one
-installs actually read, so it is the one that must never be stale.
+to have learned much yet.
+
+## Releasing
+
+The version string lives in four files — `.claude-plugin/plugin.json`,
+`.claude-plugin/marketplace.json`, this file, and `README.md` — and it drifted twice when
+only the first was bumped, so 0.4.0 and 0.5.0 never actually shipped. `marketplace.json` is
+the one installs read; a stale one means nobody downstream sees the release at all.
+
+Never edit those four by hand. `scripts/version.sh` bumps all of them at once and verifies
+each edit matched exactly once:
+
+```bash
+scripts/version.sh            # check all four agree; non-zero if they do not
+scripts/version.sh 0.6.0      # set all four
+```
+
+`scripts/git-hooks/pre-commit` refuses a commit that would leave them disagreeing. It is not
+active in a fresh clone until someone runs `git config core.hooksPath scripts/git-hooks`.
+
+If prose around a version string is reworded, `version.sh` fails loudly with the pattern that
+stopped matching. Fix the pattern in the `SITES` array — do not drop the site, or the next
+bump skips that file while reporting success, which is the failure this replaces.
+
+Tag every release: `git tag -a v<version>` and push with `--follow-tags`. Tags v0.2.0
+through v0.5.0 exist; v0.3.0 and v0.4.0 were tagged retroactively.
 
 ## Target architecture
 
