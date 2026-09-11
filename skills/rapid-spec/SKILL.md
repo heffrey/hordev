@@ -57,9 +57,11 @@ that stops work has already cost more than it saved.
 4. **Write the spec artifact** (see format below) to
    `.hordev/specs/<feature-name>.md`. It is short enough for one pass
    (~300-400 words total).
-5. **Return the spec path and stop.** If you are running as a dispatched
-   agent, you cannot invoke the next stage or speak to the user — the
-   orchestrator advances the chain to `writing-tdds`. Never send the spec to
+5. **Hand off immediately.** If you are the orchestrator, invoke `writing-tdds`
+   in the same turn — do not end your turn holding the spec, and do not ask
+   whether to continue. If you are running as a dispatched agent, return the
+   spec path and stop; you cannot invoke the next stage or speak to the user,
+   and the orchestrator advances the chain. Either way, never send the spec to
    the user for review or approval.
 
 ## Spec Artifact Format

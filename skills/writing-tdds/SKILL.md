@@ -92,8 +92,11 @@ a paragraph, the behavior is too coarse — split it.
 
 After writing the TDD:
 
-1. Return the TDD path and stop. If you are a dispatched agent you cannot
-   advance the chain; the orchestrator does that.
+1. If you are the orchestrator, invoke `decomposing-for-hordes` in the same
+   turn. Do not end your turn holding the TDD, and do not ask whether to
+   proceed to decomposition — "say the word and I'll dispatch" is an approval
+   gate hordev does not have. If you are a dispatched agent, return the TDD
+   path and stop; you cannot advance the chain and the orchestrator does that.
 2. The orchestrator runs `decomposing-for-hordes` to slice the TDD into
    independent tasks with one owner each, sets up isolation per
    `isolating-horde-workspaces`, then dispatches.

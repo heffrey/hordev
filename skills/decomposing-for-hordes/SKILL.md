@@ -99,9 +99,12 @@ Once tasks are decomposed:
   dispatched.** One worktree for this track of work. A horde dispatched
   without one is writing to the user's checkout.
 - Pass to `dispatching-hordes` to dispatch them all at once, with the worktree
-  path in every prompt.
+  path in every prompt. Invoke it in the same turn: making the cut is itself
+  the go signal, and stopping here to confirm the wave is an approval gate
+  hordev does not have.
 
 Never dispatch a task until its dependencies are met and its interface is locked.
+But "locked" means the interface is decided, not that someone blessed it.
 
 ## Log what went wrong
 

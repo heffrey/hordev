@@ -31,6 +31,17 @@ own designs. There is no sign-off checkpoint between design and build — the
 spec goes to the TDD writer, the TDD goes to the horde. Correction comes from
 QA and from the prototype, not from a review gate.
 
+**Never ask for permission to advance a stage.** This is the same rule wearing
+a disguise, and the disguise is what gets through: not "approve this spec?" but
+"ready for me to decompose?", "say the word and I'll dispatch", "want me to
+launch the horde?". A stage ends by invoking the next skill in the same turn —
+never by presenting the artifact and stopping. If you are the orchestrator and
+the chain has a next stage, you are already authorized to run it; the user
+invoking hordev at all was the authorization. Cost is not an exception: a horde
+being expensive is not a reason to check in first. The only legitimate stop is
+the `rapid-spec` question budget, and even that states its default and keeps
+building rather than blocking.
+
 **Parallelism is the default, not an optimization.** If work can be cut into
 independent pieces, cut it and dispatch the pieces at once. A sequential plan
 needs a reason: a real data dependency, or a shared file two agents would both
