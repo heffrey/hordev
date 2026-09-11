@@ -5,138 +5,148 @@ description: Use when turning a TDD into independent tasks that can run in paral
 
 # Decomposing for Hordes
 
-Cut a TDD into atomic tasks that can run simultaneously. Parallelism fails when tasks
-collide on files or create hidden dependencies. This skill teaches the independence test
-and the rules of file ownership.
+Cut a TDD into atomic tasks that can run simultaneously. Parallelism fails when two
+tasks touch the same thing, or when a task you planned never goes out at all. This
+skill teaches what "the same thing" actually means, and how to check the cut was
+delivered whole.
+
+## The unit is a write surface, not a file
+
+The obvious rule — "assign every file to one task" — is where this skill used to
+stop, and it is why every collision that matters slipped past it. A file is only
+the commonest kind of write surface. Enumerate all five before you cut:
+
+**1. Files a task writes.** The easy case. One owner each.
+
+**2. Files a task *creates*, and everything that then matches them.** A task adding
+a new toolchain root — a second app, a nested package, anything with its own
+`tsconfig`, `eslint` config or lockfile — silently changes every sibling config
+whose glob now sweeps it up. The new directory has an owner. *The existing configs
+it breaks do not.* Nobody wrote them, so nobody checked them, and the failure
+surfaces as dozens of errors in an app nobody touched.
+
+**3. Config and environment files, which are shared state wearing a file's clothes.**
+An `.env.local`, a `docker-compose.yml`, a `project.yml`. Two writers here do not
+merge badly — one silently replaces the other's working state, and the product keeps
+running while showing the wrong thing.
+
+**4. Live external state.** A database, a running dev server, a port, a cloud
+project. Two tasks that both run migrations, or both restart a server, or both
+`db reset`, are colliding even though they share no file.
+
+**5. Your own hands.** You are a writer. Ownership gets reasoned about
+agent-versus-agent, so an orchestrator who assigns a file and then edits it too is
+the collision nobody is looking for. If you will touch it during the wave, you own
+it and no agent gets it — otherwise the agent reports your edits as mysterious
+changes appearing under it, and is right to.
+
+**A near-miss is a collision.** Two writers where one happened to land last is luck,
+not isolation. Count it, fix the cut, and log it — especially on a config file,
+where the loser's version can replace a working backend with fixtures and nothing
+looks broken.
 
 ## Independence Test
 
 Two tasks can run in parallel if ALL of these hold:
 
-- **No file collision:** Each file is owned by exactly one task. No two tasks write the
-  same file.
-- **No ordering dependency:** Task B does not require Task A's output or side effects to
-  start.
-- **No shared state:** No two tasks mutate the same database, environment, or config.
-- **Input is complete:** Both tasks have all code and context they need in their prompt.
-  They cannot see the conversation or reference your changes mid-run.
+- **No shared write surface.** All five kinds above, not just files.
+- **No ordering dependency.** Task B does not need Task A's output or side effects.
+- **Input is complete.** Both have all context inlined in the prompt. They cannot see
+  the conversation, your changes, or each other.
 
-Use this checklist before grouping tasks into a wave.
+## What Stays With You
 
-## File Ownership
-
-Assign every file touched by a task to exactly one task. When two tasks both need to
-modify one file:
-
-**Option 1: Split the file.** Separate concerns into two files. Frontend code → file A,
-backend → file B.
-
-**Option 2: Sequence just those two.** Keep all other tasks parallel; run only those two
-sequentially in a second wave.
-
-**Ownership covers files that do not exist yet.** A task that creates a new
-toolchain root — a second app, a nested package, anything with its own
-`tsconfig`/`eslint`/lockfile — silently changes every sibling config that globs
-the repo. The new directory has an owner; the *existing configs it breaks* do
-not. Treat "introduces a new toolchain root" as a Wave 0 config change and
-assign the sibling configs to the orchestrator before dispatch.
-
-**The orchestrator is a writer too.** File ownership is usually reasoned about
-as agent-versus-agent, so an orchestrator who hands a file to an agent and then
-edits it as well is the collision nobody checks for. If you will touch a file
-during the wave, you own it and no agent gets it. Concurrent edits by the
-orchestrator are indistinguishable from a rogue agent, and the agent will
-report your changes as mysterious.
-
-**A near-miss is a collision.** Two writers to one file where one happened to
-land last is luck, not isolation — and when the file is configuration or an
-environment file, the loser's version can silently replace working state with
-fixtures. Count it and fix the cut.
-
-**Option 3: Keep orchestrator writes.** Schema changes, interface definitions, config
-that affects multiple tasks stays with you. Tasks implement against a fixed interface.
-
-## Task Sizing
-
-Each task should be:
-
-- **One clear deliverable:** "Write the API endpoint" or "Write the frontend form", not
-  "write backend and frontend".
-- **Self-contained:** All context inlined in the prompt (code snippets, requirements,
-  edge cases). The agent sees no git history or earlier messages.
-- **Haiku-sized:** 15–30 minutes of focused work for a cheap fast model. If it needs
-  deep reasoning, fold it into orchestration.
-
-## What Stays Sequential
-
-These decisions block parallelism. Do them before dispatching:
+Decide these before dispatch; every parallel task compiles against them:
 
 - **Schema and data model.** Define once, implement against it in parallel.
 - **Interface contracts.** Function signatures, API paths, event shapes.
-- **Shared configuration.** Env vars, feature flags, runtime settings that tasks depend
-  on.
+- **Shared configuration.** Env vars, feature flags, runtime settings.
+- **Any config a new task will newly match** (surface 2 above).
+- **Anything you intend to edit yourself** (surface 5).
 
-Finalize these with your TDD. Once locked, tasks can assume them.
+"Locked" means decided, not blessed. There is no approval gate here.
 
-## Worked Example: User Settings Page
+## Resolving a contested surface
 
-**TDD:** Add a settings page where users pick a timezone and theme, saved to the database.
+**Split it.** Separate concerns into two files, one owner each.
 
-**Orchestrator decides (you):**
-- API route: `PATCH /users/:id` with `{ timezone, theme }` in the body
-- Database schema: `users.timezone`, `users.theme` columns
-- Frontend form fields: two dropdowns, a save button
+**Sequence just those two.** Everything else stays parallel; those two run in
+successive waves.
 
-**Task decomposition (four parallel tasks):**
+**Keep it.** It becomes yours, and no agent gets it.
 
-1. **Backend API** (owns `src/routes/users.ts`): POST route, validate inputs, update DB.
-2. **Frontend form** (owns `src/components/SettingsForm.tsx`): Build form, handle submit.
-3. **Timezone list** (owns `src/utils/timezones.ts`): Generate dropdown options.
-4. **Theme provider** (owns `src/context/ThemeContext.tsx`): Theme selector logic.
+## Task Sizing
 
-No collisions. Each task writes one file. Frontend form imports timezone list and theme
-context but doesn't modify them. All run simultaneously.
+- **One clear deliverable.** "Write the API endpoint", not "write backend and frontend".
+- **Self-contained.** All context inlined; the agent sees no history.
+- **Haiku-sized.** 15–30 minutes for a cheap fast model. Deeper reasoning folds into
+  orchestration.
 
-## Handling Dependencies: Waves
+## Waves
 
-When Task B genuinely needs Task A's output, stage work into waves:
+When Task B genuinely needs Task A's output, stage rather than serialise:
 
-**Wave 1 (parallel):** Task A (builds core feature), Task C, Task D (independent).
+**Wave 1 (parallel):** A, C, D. **Wave 2 (parallel):** B (uses A), E.
 
-**Wave 2 (parallel):** Task B (uses A's output), Task E (independent).
+Wait for Wave 1 to land before Wave 2. Waves preserve the parallelism that exists;
+falling back to fully sequential throws it away.
 
-Wait for Wave 1 to finish before dispatching Wave 2. Avoid falling back to fully
-sequential; waves preserve parallelism where it exists.
+## The cut is a checklist, not a description
+
+**Write the task list down, numbered, with owned surfaces — then dispatch off that
+list, not off your memory of it.**
+
+This is the failure that hides best. A plan of sixteen tasks dispatched as ten
+produces ten green tasks, a building tree, and a passing suite. It looks exactly
+like a finished run. Nothing downstream asks "was anything never sent out" —
+reconciliation checks what came back.
+
+Two rules:
+
+- Before the first agent goes out, mark every task **dispatched** or **deferred with
+  a reason**. "Later" is a reason; silence is not.
+- Tasks in a different repository are the ones most likely to evaporate. They cannot
+  share the worktree, so they get mentally filed as separate work and never
+  re-surface. Give them a wave of their own rather than a footnote.
+
+## Worked Example: settings page + a new admin app
+
+**Orchestrator decides:** `PATCH /users/:id` with `{ timezone, theme }`; columns
+`users.timezone`, `users.theme`; and — because task 5 creates a new toolchain root —
+the root `tsconfig` and `eslint` excludes, which are **yours**, in Wave 0.
+
+| # | Task | Owns |
+|---|---|---|
+| 0 | *(you)* | root `tsconfig.json`, `eslint.config.mjs`, the API contract, the schema |
+| 1 | Backend route | `src/routes/users.ts` |
+| 2 | Settings form | `src/components/SettingsForm.tsx` |
+| 3 | Timezone list | `src/utils/timezones.ts` |
+| 4 | Theme provider | `src/context/ThemeContext.tsx` |
+| 5 | Admin app | `admin/**` — new toolchain root, hence task 0 |
+
+1–5 run at once. Task 2 imports 3 and 4 without modifying them. Task 5 would have
+broken 1–4's typecheck if task 0 had not existed.
 
 ## Handoff to `dispatching-hordes`
 
-Once tasks are decomposed:
-
-- Verify the independence checklist above.
-- List tasks with ownership and deliverables.
-- **Set up isolation per `isolating-horde-workspaces` before anything is
-  dispatched.** One worktree for this track of work. A horde dispatched
-  without one is writing to the user's checkout.
-- Pass to `dispatching-hordes` to dispatch them all at once, with the worktree
-  path in every prompt. Invoke it in the same turn: making the cut is itself
-  the go signal, and stopping here to confirm the wave is an approval gate
-  hordev does not have.
-
-Never dispatch a task until its dependencies are met and its interface is locked.
-But "locked" means the interface is decided, not that someone blessed it.
+- Run the independence test over all five surface kinds.
+- Confirm every planned task is dispatched or deferred with a reason.
+- **Set up isolation per `isolating-horde-workspaces` first.** A horde dispatched
+  without a worktree is writing to the user's checkout.
+- Invoke `dispatching-hordes` in the same turn. Making the cut is the go signal;
+  stopping to confirm the wave is an approval gate hordev does not have.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
-whenever a cut you made turns out wrong: two agents needed the same file, a
-task was too large for one agent, or a dependency you missed forced a wave to
-be redone. Decomposition failures surface late, so they are easy to forget by
-the time they hurt.
+Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`) when a
+cut turns out wrong: two writers on one surface, a task too large for one agent, a
+missed dependency, or a planned task that never went out. Decomposition failures
+surface late and are easy to forget by the time they hurt.
 
 ## Battle cry
 
-"Swobu." — *as you command*, when the cut is made and no two tasks want the
-same file.
+"Swobu." — *as you command*, when the cut is made and no two tasks want the same
+surface.
 
 Once, at that moment — not every message, and never two messages running. Full
 rules in `using-hordev` § Voice: conversational output only, never in artifacts,

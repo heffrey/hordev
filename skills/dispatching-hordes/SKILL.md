@@ -20,17 +20,58 @@ Do NOT use hordes when tasks are tightly coupled or agents need live back-and-fo
 
 ## The Prompt Contract
 
-Each agent gets a self-contained prompt with:
+An agent cannot ask you anything, cannot see the conversation, and will do
+exactly what the prompt supports — including things it supports by accident.
+Every item below is load-bearing.
 
-1. **The task:** One sentence. What does this agent own?
-2. **Input files/dependencies:** Exactly which files exist; what earlier agents produced that this agent consumes
-3. **Output files:** Which files does the agent create or modify? Name them exactly
-4. **Test cases:** What must pass? Paste actual test expectations (test names, expected outputs, edge cases). No "make tests pass" — list what passing looks like
-5. **Acceptance criteria:** Hard stops. "Deliver X, or report BLOCKED"
-6. **Style bar:** Match the surrounding code (indent, naming, comment density)
-7. **Explicit instruction to write, not plan:** "Implement the code directly. Do not write a plan. Write the code."
-8. **Worktree path:** The horde's worktree from `isolating-horde-workspaces`. The agent works only there. Without it the agent edits the user's checkout.
-9. **Open assumptions:** The IDs and `Decided` lines from `.hordev/assumptions.md` that bear on this component. An agent that does not know what was assumed will contradict it.
+1. **The task.** One sentence. What does this agent own?
+2. **Input.** Exactly which files exist, and what earlier agents produced that
+   this one consumes.
+3. **Output.** Which files it creates or modifies. Name them exactly. This is
+   its write surface and nothing else is.
+4. **What passing looks like.** Paste real test names, expected values, edge
+   cases. Never "make the tests pass".
+5. **The verification command, verbatim, with raw output required.** See below —
+   this is the item most often left implicit and it is the one that fails
+   silently.
+6. **Acceptance.** Hard stops. "Deliver X, or report BLOCKED."
+7. **Style bar.** Match the surrounding code: indentation, naming, comment
+   density.
+8. **Write, do not plan.** "Implement the code directly. Do not write a plan."
+9. **Worktree path.** From `isolating-horde-workspaces`. Without it the agent
+   edits the user's checkout.
+10. **Open assumptions.** The IDs and `Decided` lines from
+    `.hordev/assumptions.md` bearing on this component. An agent that does not
+    know what was assumed will contradict it. Only cite IDs that exist.
+11. **Prohibitions, stated twice** — once where they belong and once in the
+    closing lines. See below.
+
+### 5, expanded: name the command, demand the output
+
+State the exact command and require the agent to paste what it printed.
+
+An agent left to choose its own verification will choose one that works for it.
+One reported "21/21 passing" under `npx tsx --test`; the suite had never
+executed under the project's `node --test`, because the two resolve imports
+differently. The claim was true and worthless, and typecheck and build were
+green the whole time.
+
+"Verify it works" is not a contract. `npm run lint && node --test src/x.test.ts`
+is. The same goes for build and typecheck. Requiring raw output matters as much
+as naming the command: a summary is the agent's reading of the result, and the
+reading is the part that goes wrong.
+
+`horde-qa` then re-runs *that* command, not whichever one came back in the
+report.
+
+### 11, expanded: prohibitions bracket the prompt
+
+An agent that starts acting before it finishes reading will break a rule it has
+not reached yet. One told plainly not to run git ran `git rm` and `git commit`,
+found the instruction afterwards, and had to unwind its own commit.
+
+Put every prohibition in the closing lines as well as wherever it naturally
+belongs. It costs three lines and it survives an agent that reads in order.
 
 **Skeleton prompt:**
 
@@ -38,29 +79,33 @@ Each agent gets a self-contained prompt with:
 TASK: Implement Widget.authorize() to approve pending transactions over $100.
 
 INPUT:
-- src/widget.ts (exists; defines Widget class, has empty authorize() method stub)
-- test/widget.test.ts (exists; tests are commented-out, await your implementation)
-- Previous agent built src/transaction.ts (defines Transaction class, methods: .isOver(amount), .approve())
+- src/widget.ts (exists; Widget class, empty authorize() stub)
+- test/widget.test.ts (exists; tests commented out, awaiting your implementation)
+- src/transaction.ts (from an earlier agent; Transaction, .isOver(n), .approve())
 
-OUTPUT:
-- src/widget.ts: Add authorize() implementation
-- test/widget.test.ts: Uncomment and ensure all 4 tests pass
+OUTPUT — your entire write surface:
+- src/widget.ts
+- test/widget.test.ts
+Touch nothing else.
 
-TEST CASES:
-1. "approves transactions over $100" — calls approve() on each transaction with amount > 100
-2. "skips transactions under $100" — does NOT call approve() on smaller transactions
-3. "handles empty transaction list" — no error when no transactions exist
-4. "returns count of approved" — returns number of approvals made
+WHAT PASSING LOOKS LIKE:
+1. "approves transactions over $100" — approve() called on each amount > 100
+2. "skips transactions under $100" — approve() not called on smaller ones
+3. "handles empty transaction list" — no error on an empty list
+4. "returns count of approved" — returns the number approved
+
+VERIFY WITH EXACTLY THIS, AND PASTE THE RAW OUTPUT:
+    npx tsc --noEmit -p tsconfig.json && node --test test/widget.test.ts
+Do not substitute another runner. If it does not pass, say so and say why —
+do not weaken a test to make it green.
 
 ACCEPTANCE:
-- All 4 tests must pass
+- All 4 tests pass under the command above
 - No TypeScript errors
-- authorize() must not modify Transaction class
+- authorize() does not modify the Transaction class
 
-STYLE:
-- Use existing naming (camelCase, no prefixes)
-- Add JSDoc for public methods
-- Match indentation of Widget class
+STYLE: existing naming (camelCase, no prefixes), JSDoc on public methods,
+match the indentation of the Widget class.
 
 WORKTREE: .claude/worktrees/horde-1730000000
 Work only inside this directory.
@@ -69,33 +114,11 @@ OPEN ASSUMPTIONS (do not contradict):
 - A-002: Transaction amounts are integer cents, never floats.
 - A-007: No auth on internal endpoints for the prototype.
 
-Do not run git. Do not commit. Write the files and stop.
-
 Implement directly. Do not write a plan. Write the code.
+
+DO NOT: run any git command. Commit. Touch files outside OUTPUT above.
+Substitute your own verification command.
 ```
-
-## Name the Verification Command
-
-State the exact command the agent must run to verify, and require it to paste
-the raw output. An agent left to choose its own runner will choose one that
-works for it: a suite reported as "21/21 passing" under `npx tsx --test` had
-never executed under the project's `node --test`, because the two resolve
-imports differently. The claim was true and useless.
-
-The same applies to build, lint and typecheck. "Verify it works" is not a
-contract; `npm run lint && node --test path/to/x.test.ts` is.
-
-`horde-qa` then re-runs *that* command rather than the one the agent chose.
-
-## Repeat Prohibitions at the End
-
-An agent that acts before finishing the prompt will violate a rule it has not
-read yet. One told not to run git ran `git rm` and `git commit`, caught the
-instruction afterwards, and had to unwind its own commit.
-
-Put every prohibition in the last three lines of the prompt as well as where it
-naturally belongs. Cheap insurance against a long brief being acted on in
-order.
 
 ## Say Who Commits
 
