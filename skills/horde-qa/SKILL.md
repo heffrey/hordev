@@ -79,8 +79,27 @@ doesn't mention it, check it against the prototype.
 
 ## Checklist (in order)
 
-1. **Tests exist and run:** `npm test` or equivalent. Exit code 0? Count pass/fail.
+0. **The suite actually executes, as the right user.** Before reading any
+   result, confirm the suite ran at all and ran with the privileges of the thing
+   it claims to test. A planned-35/ran-4 is not "mostly passing", it is a suite
+   that aborted. Worse, a security suite executed as a superuser bypasses the
+   very policies it asserts and can go fully green while testing nothing.
+   - Compare planned assertions against executed assertions; a gap is a failure.
+   - For any authorization or permission test, verify the role in effect.
+   - STOP if the suite has never been executed. Untested test code is not
+     evidence, and its bugs mask exactly the controls it was written to prove.
+
+1. **Tests exist and run:** `npm test` or equivalent — **the project's own
+   command, named in the dispatch prompt**, not one the agent chose. Exit code
+   0? Count pass/fail. Run it yourself; an agent's report is a claim.
    - STOP if exit code nonzero. Escalate: agent didn't finish.
+
+1b. **Content-heavy data has invariant tests, not just function tests.** A
+   lexicon shipped with four duplicate object keys and a fully green suite,
+   because the tests exercised the function that reads the data and never the
+   data itself. For any task whose deliverable is largely a data structure,
+   require an invariant test over the structure — uniqueness, no cross-entry
+   contradictions, expected cardinality.
 
 2. **Tests assert, don't stub:** Read test output and code. Are assertions
    meaningful or do they just check `x !== null`?

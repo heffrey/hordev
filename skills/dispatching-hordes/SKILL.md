@@ -74,6 +74,29 @@ Do not run git. Do not commit. Write the files and stop.
 Implement directly. Do not write a plan. Write the code.
 ```
 
+## Name the Verification Command
+
+State the exact command the agent must run to verify, and require it to paste
+the raw output. An agent left to choose its own runner will choose one that
+works for it: a suite reported as "21/21 passing" under `npx tsx --test` had
+never executed under the project's `node --test`, because the two resolve
+imports differently. The claim was true and useless.
+
+The same applies to build, lint and typecheck. "Verify it works" is not a
+contract; `npm run lint && node --test path/to/x.test.ts` is.
+
+`horde-qa` then re-runs *that* command rather than the one the agent chose.
+
+## Repeat Prohibitions at the End
+
+An agent that acts before finishing the prompt will violate a rule it has not
+read yet. One told not to run git ran `git rm` and `git commit`, caught the
+instruction afterwards, and had to unwind its own commit.
+
+Put every prohibition in the last three lines of the prompt as well as where it
+naturally belongs. Cheap insurance against a long brief being acted on in
+order.
+
 ## Say Who Commits
 
 **Agents write files. The orchestrator commits.** State this in every prompt.

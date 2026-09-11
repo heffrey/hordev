@@ -44,6 +44,29 @@ proceeding with in the same breath, then start building against it. If the
 answer arrives and differs, adjust — that is cheaper than the wait. A question
 that stops work has already cost more than it saved.
 
+## Ground the Spec in Source, Not Documentation
+
+Project docs describe the union of everything that has been built. The branch
+you are specifying against describes what exists *now*. In a repo with unmerged
+work those differ, and nothing downstream can catch it: a spec that names an
+interface which is not on this branch produces correct code, passing tests, and
+a wrong product.
+
+Before specifying any interface, read it in the source on the branch being
+built. Where source and documentation disagree, that disagreement is a finding
+to surface, not something to quietly resolve in favour of the docs.
+
+## Never Cite an Assumption You Have Not Written
+
+An assumption ID in a spec or a dispatch prompt is a promise that the entry
+exists. Cite one you never wrote and every later stage behaves as though the
+decision were on record while the user, reading the ledger, never sees it — a
+decision made on their behalf and then hidden. That is the exact failure the
+ledger exists to prevent.
+
+Write the entry first, then cite it. Before handing off, diff the IDs cited
+against the IDs recorded.
+
 ## Process
 
 1. **Read the request.** Assess scope and existing context (code, docs, recent

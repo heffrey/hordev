@@ -34,6 +34,25 @@ backend → file B.
 **Option 2: Sequence just those two.** Keep all other tasks parallel; run only those two
 sequentially in a second wave.
 
+**Ownership covers files that do not exist yet.** A task that creates a new
+toolchain root — a second app, a nested package, anything with its own
+`tsconfig`/`eslint`/lockfile — silently changes every sibling config that globs
+the repo. The new directory has an owner; the *existing configs it breaks* do
+not. Treat "introduces a new toolchain root" as a Wave 0 config change and
+assign the sibling configs to the orchestrator before dispatch.
+
+**The orchestrator is a writer too.** File ownership is usually reasoned about
+as agent-versus-agent, so an orchestrator who hands a file to an agent and then
+edits it as well is the collision nobody checks for. If you will touch a file
+during the wave, you own it and no agent gets it. Concurrent edits by the
+orchestrator are indistinguishable from a rogue agent, and the agent will
+report your changes as mysterious.
+
+**A near-miss is a collision.** Two writers to one file where one happened to
+land last is luck, not isolation — and when the file is configuration or an
+environment file, the loser's version can silently replace working state with
+fixtures. Count it and fix the cut.
+
 **Option 3: Keep orchestrator writes.** Schema changes, interface definitions, config
 that affects multiple tasks stays with you. Tasks implement against a fixed interface.
 
