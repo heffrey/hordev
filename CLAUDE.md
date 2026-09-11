@@ -65,7 +65,7 @@ tool.
 
 ## Status
 
-Version 0.5.0. The plugin manifest, both hooks, and the skill library exist. There is no
+Version 0.6.0. The plugin manifest, both hooks, and the skill library exist. There is no
 build step and no test suite yet — validation is currently reading the files and checking
 that hooks emit valid JSON. Both hooks have now fired in live sessions.
 
