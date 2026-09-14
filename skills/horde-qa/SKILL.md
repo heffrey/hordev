@@ -60,22 +60,14 @@ an agent didn't finish. Q2 failure means the design was wrong all along.
 
 ## Verifying at Horde Scale
 
-Cheap-invalidating-first: run tests first, then target inspection.
-
-**Run tests immediately.** 0 pass = agent didn't write runnable code. Stop.
+Cheapest invalidation first: the suite (checklist 0-2), then the real path
+(3), then the design (4-5). Zero passing tests means no runnable code; stop.
 
 **Inspect fast.** Don't re-read all implementation. Target:
 - Files where agent returned suspiciously terse or fast responses
 - Seams between modules (agent may have stubbed integration)
 - Code marked "TODO" or "FIXME"
 - Anything the TDD called an assumption
-
-**Exercise the actual path.** Don't trust README examples. Start the app, click
-the button, enter real data. Run the tool end-to-end the way users will.
-
-**Check TDD assumptions against spec.** Open both files. For each assumption
-the TDD listed, verify the spec actually makes that assumption. If the spec
-doesn't mention it, check it against the prototype.
 
 ## Checklist (in order)
 
@@ -112,7 +104,27 @@ doesn't mention it, check it against the prototype.
      actually occurs (stored rows, captured requests), not only on the TDD's
      examples.
 
-3. **User path works:** Actual application start, real interaction.
+3. **The real path, observed in the real runtime.** Required, never inferred
+   from the steps above. Green-but-broken is the largest failure class in
+   hordev's history. In one run, with typecheck, lint, tests and build green
+   throughout: a second app shipped unstyled because its CSS pipeline never
+   compiled; analytics went to a regional host that answers HTTP 200 and
+   discards the event; session replay loaded despite autocapture being off;
+   sign-in failed with a bare 500 from NULL columns in seed data; a magic link
+   redirected to the wrong app; a no-JavaScript form posted urlencoded to a
+   JSON-only parser. Each was visible within a minute of using the thing.
+   - Run it where users run it: a browser with the network panel open, `curl`
+     against the running server, a real sign-in. Put the observation in the
+     report — the command and what it printed, the request and its status.
+     "Works" with no observation is a claim.
+   - **Name the negative control.** For each critical claim, write down the
+     observation that would differ if the feature were broken, and check that
+     one. "No errors" is never it: analytics that sends nothing has no errors.
+     The control is the event arriving at the ingest host; a computed style on
+     a real element; the request a privacy guarantee says must not appear. A
+     suite whose result is the same whether the feature works or does nothing
+     does not cover the feature — an analytics allowlist suite passed whether
+     or not a single event was ever sent.
    - STOP if core path breaks. Fix and verify.
    - "There is no runnable path" is not an answer until you have priced a
      synthetic client (a scripted HTTP caller, a software authenticator, a fake
@@ -124,8 +136,9 @@ doesn't mention it, check it against the prototype.
    it or explicitly assumes it won't be tested.
    - If silent gap: check prototype handles it. If not, escalate to `rapid-spec`.
 
-5. **Assumptions hold:** For each assumption in TDD, verify spec makes it or
-   prototype handles it safely.
+5. **Assumptions hold:** Open the TDD and the spec together. For each
+   assumption the TDD lists, verify the spec makes it or the prototype handles
+   it safely.
    - If assumption was wrong, escalate to `rapid-spec`.
    - For every entry that names a risk and a mitigation, list each branch the
      mitigation can take, including the one where it fires on a legitimate
