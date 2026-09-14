@@ -182,7 +182,17 @@ git -C "$(dirname "$SKILL_PATH")" rev-parse --show-toplevel 2>/dev/null
 **Installed from a clone** (the path resolves, and it is the hordev checkout):
 edit the skill directly and commit with
 `improving-hordev: <skill> — add rule for <symptom>`. Keep amendments
-reviewable in git history.
+reviewable in git history. Two things catch people here:
+
+- **A release goes through `scripts/version.sh <x.y.z>`**, then a
+  `Release x.y.z` commit and an annotated tag. Never bump a version string by
+  hand: it lives in four files, and the pre-commit hook rejects a commit where
+  they disagree.
+- **A committed amendment does not reach the session that made it.** Sessions
+  load skills from the plugin cache, which refreshes when the plugin updates
+  from the marketplace, not when the clone changes. Reloading skills reports
+  no changes until then. Say so when you report the amendment, rather than
+  letting the user assume the running session already follows it.
 
 **Installed from the marketplace** (skills live under the plugin cache): do
 NOT edit them. That directory is not version controlled and is overwritten on
