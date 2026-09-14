@@ -63,6 +63,8 @@ done
 
 [ -n "$grown" ] || exit 0
 
-reason="hordev: run log grew since the last reflection ($grown). Invoke the improving-hordev skill and decide whether anything in this run should change a skill. Amend on a repeated failure, not a one-off. If nothing clears that bar, say so in one line and stop."
+# The procedure is owned by using-hordev's Reflect stage. This text quotes it
+# word for word, and tests/reflect-hook.test.sh fails if the two drift.
+reason="hordev: run log grew since the last reflection ($grown). If a run is still in progress, finish it first. Then run the Reflect stage from using-hordev: Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes."
 
 printf '{"decision":"block","reason":"%s"}\n' "$(json_escape "$reason")"

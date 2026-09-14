@@ -131,10 +131,13 @@ Requires `bash`. Nothing else.
 
 Early. Version 0.6.1.
 
-The skills are written, and both hooks now run inside live Claude Code
-sessions: `session-start.sh` injects the entrypoint skill at startup, and
-`reflect.sh` blocks once on Stop when the run log has grown, then stays silent
-behind its `stop_hook_active` guard and its `.hordev/.reflected` stamp.
+The skills are written, and both hooks run inside live Claude Code sessions:
+`session-start.sh` injects the entrypoint skill at startup, and `reflect.sh`
+blocks once on Stop when a run log has grown — in the main checkout or in any
+`.claude/worktrees/*/` — then stays silent behind its `stop_hook_active` guard
+and a `.reflected` stamp beside each log. Before 0.7.0 it looked only in the
+main checkout, so it never fired for a run isolated in a worktree. `tests/run.sh`
+exercises both against fixture projects.
 
 The self-improvement loop has closed at least once on its own output — the
 amendments in 0.4.0 came out of a run logged in `.hordev/run-log.md` — but the

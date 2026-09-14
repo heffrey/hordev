@@ -102,9 +102,9 @@ This skill does two separable things, and only one of them is dangerous.
 
 **Analyse and propose** — read `.hordev/run-log.md`, count occurrences per
 skill, apply the amendment bar, and draft the exact text to insert and where.
-Bounded, mechanical, and touches no skill file. This is the **Reflect** stage in
-`using-hordev`: dispatched automatically after Verify passes, on `sonnet`, with
-`.hordev/proposed-amendments.md` as its only output.
+Bounded, mechanical, and touches no skill file. This is the **Reflect** stage;
+`using-hordev` owns when it runs, on which model, and what it writes. This skill
+owns only the analysis rules below.
 
 **Amend and commit** — edit a `SKILL.md` and put it in version control.
 Orchestrator only, always. A library that edits itself through an agent nobody
@@ -171,11 +171,9 @@ NEW:
 ## Guardrails against runaway self-modification
 
 - **No mid-run edits.** Finish the current run. Log the failure. Amend next cycle.
-- **No subagent edits.** Only the main agent edits skills. A subagent may read
-  the log, tally repeats and draft amendment text — that is the Reflect stage
-  and it is automatic. It may not touch a `SKILL.md`. The orchestrator applies
-  what it proposes, or declines to. This is the boundary that keeps hordev from
-  rewriting itself while nobody is reading.
+- **No subagent edits.** Only the orchestrator edits skills; a Reflect agent
+  proposes (see Two jobs, two owners). This is the boundary that keeps hordev
+  from rewriting itself while nobody is reading.
 - **Version control only.** All edits in git. No hidden tweaks.
 - **Do not overfit.** Wait for repetition (2+ times) before amending.
 - **Skill bloat detection.** If a skill grows > 20 rules, it is overfit. Rewrite instead.

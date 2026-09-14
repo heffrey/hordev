@@ -134,12 +134,16 @@ and cannot hand off to the next stage. So:
 4. **Swarm.** You dispatch the horde, then run `reconciling-horde-output`
    yourself when it returns.
 5. **Verify.** You run `horde-qa` yourself.
-6. **Reflect.** Dispatch one `sonnet` agent with the `improving-hordev` skill
-   text and the path to `.hordev/run-log.md`. It returns a path to
-   `.hordev/proposed-amendments.md`. It may not edit a skill — that is yours,
-   and it is the one guardrail against hordev quietly rewriting itself. Sonnet
-   rather than opus because the output is a proposal you read before applying;
-   a wrong tally costs a read, not a corrupted library.
+6. **Reflect.** Dispatch one sonnet agent with the improving-hordev skill text
+   and the run log paths. It writes .hordev/proposed-amendments.md beside the
+   run log and edits no skill; you apply or decline what it proposes.
+
+   This is the only description of how reflection runs. The `Stop` hook
+   (`hooks/reflect.sh`) is a trigger: when a run log has grown it quotes the
+   sentence above and names the logs, and that is all it does. Editing a skill
+   stays yours — the one guardrail against hordev quietly rewriting itself.
+   Sonnet rather than opus because the output is a proposal you read before
+   applying; a wrong tally costs a read, not a corrupted library.
 
 If a stage's agent returns something unusable, re-dispatch a fresh agent with an
 amended prompt. There is no resuming a finished agent — it has no context left

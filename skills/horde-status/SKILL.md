@@ -49,7 +49,7 @@ Extract ✓ → Design ✓ → Cut ✓ → Swarm ◈ → Verify ○ → Reflect 
 
 `✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. Never mark Verify `✓` on the horde's own say-so.
 
-Reflect is the automatic post-run stage: a sonnet agent reads the run log and proposes amendments. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
+Reflect is the post-run stage `using-hordev` defines. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
 
 ### 3. Task table
 

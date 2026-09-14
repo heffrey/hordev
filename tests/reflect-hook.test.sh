@@ -65,6 +65,17 @@ entry > "$R/.claude/worktrees/other/.hordev/run-log.md"
 out=$(run_hook "$R/.claude/worktrees/iso")
 assert_contains "project dir inside a worktree still scans the whole project" "$out" 'worktrees/other/'
 
+# One owner for reflection: the hook quotes using-hordev's Reflect stage word
+# for word. If either side is edited alone, this fails.
+SENTENCE='Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes.'
+stage=$(tr '\n' ' ' < "$REPO/skills/using-hordev/SKILL.md" | tr -s ' ')
+assert_contains "using-hordev states the Reflect procedure" "$stage" "$SENTENCE"
+touch -t "$OLD" "$Q/.hordev/.reflected"   # $Q was reflected above; grow it again
+out=$(run_hook "$Q")
+assert_contains "hook reason quotes that procedure exactly" "$out" "$SENTENCE"
+count=$(grep -rlF 'Dispatch one sonnet agent with the improving-hordev skill text' "$REPO/skills" | wc -l | tr -d ' ')
+assert_status "procedure appears in exactly one skill" "$count" 1
+
 # Nothing to reflect on.
 E=$(scratch)
 out=$(run_hook "$E"); status=$?
