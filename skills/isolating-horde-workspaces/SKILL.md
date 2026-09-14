@@ -67,6 +67,27 @@ git worktree add "$AGENT_WORKTREE" "$BASE" -b "horde/agent-$AGENT_NAME"
 
 Each agent owns its worktree directory and branch. Keep it isolated: do NOT access files across worktrees.
 
+## Sibling Repositories
+
+Work that spans two git repositories (an app and its marketing site, a service
+and its infrastructure repo) is two tracks, because a worktree belongs to one
+repository. `decomposing-for-hordes` gives the sibling's tasks a wave of their
+own; this is how that wave is isolated.
+
+- **Its own branch, in its own repository,** off that repository's default
+  branch, named for the same run in both (`horde/run-<id>`) so the two are
+  found together.
+- **Its own worktree inside the sibling repository**, created the same way as
+  above, before dispatch. Agents in that wave get that path and nothing from
+  the primary worktree.
+- **The orchestrator commits there too.** If the session cannot run git in the
+  sibling repository (a session isolated to one worktree may be refused), create
+  the sibling worktree and branch before isolating, or put the exact commands
+  in the report for the user to run. Sibling work written and never committed
+  is not done: a single checkout in that repository discards it, and nothing in
+  the primary branch shows it existed.
+- **The report names every branch**, one per repository.
+
 ## Shared-State Hazards and Mitigations
 
 Ownership does not prevent these:

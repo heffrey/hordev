@@ -222,7 +222,9 @@ three things:
    first, in the format `assumption-ledger` defines. Never omit these because
    the tests passed; a passing suite proves the code matches the TDD, not that
    the assumptions behind it were right.
-3. **The branch** the work is on, so the user can review or discard it whole.
+3. **The branch** the work is on, so the user can review or discard it whole —
+   one per repository when the run spans more than one (see
+   `isolating-horde-workspaces`).
 
 Do not merge, push, or delete the branch. Hand it over and let the user decide.
 
