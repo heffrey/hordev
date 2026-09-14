@@ -78,8 +78,16 @@ check that enforces it.
    check you run locally will agree you are alone. Prefer a form that cannot
    collide, such as a timestamp prefix, over the next integer.
 4. **Write the spec artifact** (see format below) to
-   `.hordev/specs/<feature-name>.md`. It is short enough for one pass
-   (~300-400 words total).
+   `.hordev/specs/<feature-name>.md`. Size it to the feature, not to how
+   thorough it could be:
+   - one surface (a screen, an endpoint, a job): 300-400 words
+   - several surfaces, or a new data model: up to 800
+   - past 800 it is more than one feature, and becomes more than one spec
+
+   A flat 300-400 was blown by every spec in a twelve-spec run, most by three
+   to five times, so a flat number is not a budget anyone follows. Only the
+   orchestrator raises this one, and only out loud — see
+   `dispatching-hordes`.
 5. **Hand off immediately.** If you are the orchestrator, invoke `writing-tdds`
    in the same turn — do not end your turn holding the spec, and do not ask
    whether to continue. If you are running as a dispatched agent, return the

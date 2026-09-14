@@ -47,6 +47,15 @@ Every item below is load-bearing.
 11. **Prohibitions, stated twice** — once where they belong and once in the
     closing lines. See below.
 
+### A skill's budget holds unless the prompt says otherwise, out loud
+
+A length or scope budget named in a skill (a spec's word count, a TDD's unit
+size) is the budget the agent gets. To give a task a different one, put the
+number in its prompt and append a run-log entry, `CLASS: budget-overrun`, saying
+which budget and why. A prompt that quietly authorized 500-1,000-word specs is
+how a 300-400 budget turned into 2,000-word specs with nobody having decided
+it. Logged overrides are also how Reflect learns a budget is wrong.
+
 ### Save every prompt before you send it
 
 Write each prompt to `.hordev/dispatch/<task>.md`, exactly as the agent will
