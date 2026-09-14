@@ -101,6 +101,12 @@ symptoms back to the skill that probably needs the edit — seam bugs usually
 mean the decomposition rules are too loose, agents returning plans instead of
 code mean the dispatch prompt contract is weak.
 
+Failures are counted by class across every project that has run hordev, not
+per log, so the same mistake in two codebases counts as the repeat it is. And
+it stops: once the ten most recent runs, across at least three projects, repeat
+no failure class, the hook says so once and goes quiet. It wakes by itself if a
+class starts recurring again. `HORDEV_REFLECT=on` or `off` overrides it.
+
 ### It talks like a horde
 
 ![A Claude Code session - the user ends a feature request with "for the horde!",

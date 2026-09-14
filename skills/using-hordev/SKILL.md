@@ -140,7 +140,8 @@ and cannot hand off to the next stage. So:
 
    This is the only description of how reflection runs. The `Stop` hook
    (`hooks/reflect.sh`) is a trigger: when a run log has grown it quotes the
-   sentence above and names the logs, and that is all it does. Editing a skill
+   sentence above and names the logs, and that is all it does. Once hordev has
+   converged it goes quiet on its own; `improving-hordev` defines when. Editing a skill
    stays yours — the one guardrail against hordev quietly rewriting itself.
    Sonnet rather than opus because the output is a proposal you read before
    applying; a wrong tally costs a read, not a corrupted library.

@@ -127,6 +127,29 @@ worktree) is reported, not silently skipped.
 This keeps hordev from over-fitting to bad luck while ensuring honest failures change
 the library.
 
+## When reflection goes dormant
+
+Self-improvement is a cost paid on the user's time, and it is meant to stop once
+hordev is good enough. The measure is amendment yield going to zero: real runs
+no longer repeat failures.
+
+**Converged** means all of these, over the 10 most recent run logs in the index
+that still exist:
+
+- they come from at least 3 projects, so one easy codebase cannot declare victory
+- every entry is well formed and classified, so absence of a repeat is real
+- no class reaches the recurring bar (3 or more entries) in `tally-classes.sh`
+
+When that holds, the `Stop` hook tells the user once that reflection is dormant
+and stops blocking. It keeps indexing logs. It wakes by itself the moment any
+class reaches the recurring bar again in the window, because what breaks a
+converged library is usually new: a model or harness change, not an old lesson
+forgotten. Teardown shrinking the window does not wake it.
+
+`HORDEV_REFLECT=on` forces reflection regardless; `HORDEV_REFLECT=off` silences
+the hook entirely. `HORDEV_CONVERGE_RUNS` and `HORDEV_CONVERGE_PROJECTS` change
+the window. The hook implements this section; change the definition here first.
+
 ## Symptom-to-skill map
 
 Failures surface far from their cause. Use this to diagnose which skill is actually
