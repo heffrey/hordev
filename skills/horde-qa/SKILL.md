@@ -58,6 +58,13 @@ the TDD; they say nothing about whether the TDD was aimed at the right target.
 All three must pass. Q0 failure means the run was aimed wrong. Q1 failure means
 an agent didn't finish. Q2 failure means the design was wrong all along.
 
+**No TDD, because Design was skipped:** Q1 and Q2 collapse into one question —
+does the code do what the spec says? Check it against the spec's success
+criteria and edge cases directly, and skip checklist step 4. Say plainly in the
+report that the code was verified against the spec alone. That is weaker: no
+test was written from the spec before the code existed, so the suite tests what
+the agents built, not what was asked for.
+
 ## Verifying at Horde Scale
 
 Cheapest invalidation first: the suite (checklist 0-2), then the real path

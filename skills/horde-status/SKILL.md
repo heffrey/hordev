@@ -47,7 +47,7 @@ The six stages, with the current one marked. One line.
 Extract ✓ → Design ✓ → Cut ✓ → Swarm ◈ → Verify ○ → Reflect ○
 ```
 
-`✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. Never mark Verify `✓` on the horde's own say-so.
+`✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. `Design –` also names its consequence there: Verify checks the code against the spec alone, which `horde-qa` calls weaker. Never mark Verify `✓` on the horde's own say-so.
 
 Reflect is the post-run stage `using-hordev` defines. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
 
