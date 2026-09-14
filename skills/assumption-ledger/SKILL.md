@@ -135,6 +135,17 @@ If they say nothing, you were right or they did not care — both fine.
 
 This is the whole discipline in miniature: surface the bet, do not wait on it.
 
+**New infrastructure is Existential by default.** An assumption that introduces
+a new infrastructure class — persistence, user accounts, a new deployable, a new
+vendor — is `Existential` unless the entry states why it is not. The costliest
+call in one run read "a marketplace to meet vetted coaches" as a database,
+accounts, in-app messaging and crisis detection. It was specified, built and
+tested, then removed when the user saw it: out of proportion for a one-person
+product. It was never announced, and was written to the ledger only after it
+was undone, while a far smaller call in the same run ("the community is a
+Reddit forum") was announced. Scope by blast radius, and infrastructure is
+where the blast radius lives.
+
 ## Status Lifecycle
 
 **open**: The assumption is live. The ledger mentions it, the user sees it, and

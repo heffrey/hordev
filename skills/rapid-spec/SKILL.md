@@ -106,6 +106,10 @@ Sections (in order):
   wording survives — and your reading of it is the one thing no test can check.
   `horde-qa` reads this block to catch a misread that is otherwise invisible
   because everything downstream is consistent with it.
+- **Operating context** (1 line): who builds and runs this — team size, product
+  stage — as far as you can tell. State your guess if you have to. Size the
+  design to it: safety, compliance and infrastructure scaled to an organisation
+  the user does not have is a misread, not diligence.
 - **Goal** (1 sentence): What does this build? Who uses it?
 - **Core scope** (3-5 bullet points): What is in; what is explicitly out.
 - **Key assumptions** (3-5 bullet points): Architectural choices, defaults,
