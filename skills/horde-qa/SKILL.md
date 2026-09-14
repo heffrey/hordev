@@ -167,6 +167,11 @@ Cheapest invalidation first: the suite (checklist 0-2), then the real path
 | Assumption checked | "Per TDD" | Verify against spec, not TDD |
 | Tests meaningful | "94% pass rate" | Read assertions, not count |
 | Integration works | "Modules integrated" | Run real workflow, not unit tests |
+| Verified | "21/21 passing" | Re-run with the project's command; a true claim under a runner the agent chose proves nothing |
+| Exact count | "157 canonical entries" | Count it yourself; there were 156, and the agent had no way to notice |
+| Build is clean | "Build succeeds" | Look at it running (step 3); a build passes with the styling pipeline inert |
+| Found a problem | "Encoding issues" | Reproduce it before acting on it; a confident false alarm sends QA the wrong way |
+| Obeyed prohibitions | "No git commands run" | Check `git reflog` and the index; an agent that ran git and unwound it can still say this |
 
 ## What to Do on Failure
 
