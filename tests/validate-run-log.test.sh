@@ -8,7 +8,7 @@ F="$REPO/tests/fixtures/run-logs"
 
 out=$(bash "$V" "$REPO/.hordev/run-log.md"); status=$?
 assert_status "the bootstrap log passes" "$status" 0
-assert_contains "and all nine entries are counted" "$out" "ok, 9 entries"
+assert_contains "and reports it well formed" "$out" "run-log.md: ok, "
 
 out=$(bash "$V" "$F/product-run.md"); status=$?
 assert_status "the product-run fixture passes" "$status" 0

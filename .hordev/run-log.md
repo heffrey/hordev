@@ -91,3 +91,13 @@ COST: one-off
 CLASS: green-but-broken
 RULE:
 ---
+
+EVENT: Declined from an improvement brief built on two runs: moving QA to
+sonnet. It was chosen by hand once in a product run. With no approval gate on
+specs or TDDs, verification is the only check on the design, so QA stays on
+opus; sonnet was added for bounded judgment on existing code instead.
+SKILL: using-hordev
+COST: one-off
+CLASS: other
+RULE:
+---

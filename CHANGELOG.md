@@ -3,8 +3,55 @@
 Most releases since 0.4.0 are amendments `improving-hordev` proposed from a run
 log. A failure seen twice earns a rule; seen three times, a rewrite.
 
-Versions 0.2.0 through 0.3.0 were tagged retroactively. There is no release
+Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
+
+## 0.7.0 — 2026-09-13
+
+Fifteen changes from two runs' evidence, read together, plus reflection that
+switches itself off. Adds `tests/run.sh`, a dependency-free bash suite that runs
+every hook and script against fixture projects.
+
+Mechanisms that silently did not work:
+
+- The reflect hook looked only in the main checkout, so it never fired for a
+  run isolated in a worktree. It now scans `.claude/worktrees/*/.hordev/` and
+  stamps each log beside itself.
+- The hook and the Reflect stage gave contradictory instructions. `using-hordev`
+  now owns the procedure; the hook quotes it, and a test fails if they drift.
+- Run-log entries gain `CLASS`, from a fixed vocabulary. The hook indexes every
+  log in `~/.claude/hordev/runs.md`, and `tally-classes.sh` counts classes
+  across runs, so a failure seen once in each of two projects is a repeat.
+
+Rules that depended on discipline:
+
+- `validate-run-log.sh` rejects prose, headings and malformed entries; Reflect
+  runs it before tallying.
+- Dispatch prompts are saved to `.hordev/dispatch/<task>.md`, and
+  `check-ids.sh` fails a wave that cites an assumption ID the ledger lacks.
+  `assumption-ledger` owns the rule.
+- `rapid-spec` scales its word budget to the feature (400 / 800 / split);
+  overriding a budget means stating it in the prompt and logging it.
+
+Gaps:
+
+- `horde-qa`: the real path observed in the real runtime is a required step,
+  with a named negative control per critical claim; says what verification
+  becomes without a TDD; five more lies in the table.
+- `dispatching-hordes`: check memory before wide waves; a deliberate
+  mitigation is a ledger entry, not a to-do.
+- `horde-status`: a service a report names is checked at the moment of
+  reporting.
+- `isolating-horde-workspaces`: a pattern for sibling repositories.
+- Model assignment has a `sonnet` tier for bounded judgment on existing code.
+- `assumption-ledger`: new infrastructure is Existential by default;
+  `rapid-spec` states the operating context and sizes the design to it.
+- `improving-hordev`: releases go through `scripts/version.sh`, and a committed
+  amendment does not reach the running session until the plugin updates.
+
+Reflection goes dormant once converged: the 10 most recent indexed runs, from at
+least 3 projects, repeat no failure class. The hook says so once and goes quiet,
+and wakes if a class recurs. `HORDEV_REFLECT=on|off` overrides.
 
 ## 0.6.1 — 2026-09-13
 
