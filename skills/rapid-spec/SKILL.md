@@ -58,14 +58,8 @@ to surface, not something to quietly resolve in favour of the docs.
 
 ## Never Cite an Assumption You Have Not Written
 
-An assumption ID in a spec or a dispatch prompt is a promise that the entry
-exists. Cite one you never wrote and every later stage behaves as though the
-decision were on record while the user, reading the ledger, never sees it — a
-decision made on their behalf and then hidden. That is the exact failure the
-ledger exists to prevent.
-
-Write the entry first, then cite it. Before handing off, diff the IDs cited
-against the IDs recorded.
+Write the entry first, then cite it. `assumption-ledger` owns this rule and the
+check that enforces it.
 
 ## Process
 
@@ -84,8 +78,16 @@ against the IDs recorded.
    check you run locally will agree you are alone. Prefer a form that cannot
    collide, such as a timestamp prefix, over the next integer.
 4. **Write the spec artifact** (see format below) to
-   `.hordev/specs/<feature-name>.md`. It is short enough for one pass
-   (~300-400 words total).
+   `.hordev/specs/<feature-name>.md`. Size it to the feature, not to how
+   thorough it could be:
+   - one surface (a screen, an endpoint, a job): 300-400 words
+   - several surfaces, or a new data model: up to 800
+   - past 800 it is more than one feature, and becomes more than one spec
+
+   A flat 300-400 was blown by every spec in a twelve-spec run, most by three
+   to five times, so a flat number is not a budget anyone follows. Only the
+   orchestrator raises this one, and only out loud — see
+   `dispatching-hordes`.
 5. **Hand off immediately.** If you are the orchestrator, invoke `writing-tdds`
    in the same turn — do not end your turn holding the spec, and do not ask
    whether to continue. If you are running as a dispatched agent, return the
@@ -104,6 +106,10 @@ Sections (in order):
   wording survives — and your reading of it is the one thing no test can check.
   `horde-qa` reads this block to catch a misread that is otherwise invisible
   because everything downstream is consistent with it.
+- **Operating context** (1 line): who builds and runs this — team size, product
+  stage — as far as you can tell. State your guess if you have to. Size the
+  design to it: safety, compliance and infrastructure scaled to an organisation
+  the user does not have is a misread, not diligence.
 - **Goal** (1 sentence): What does this build? Who uses it?
 - **Core scope** (3-5 bullet points): What is in; what is explicitly out.
 - **Key assumptions** (3-5 bullet points): Architectural choices, defaults,

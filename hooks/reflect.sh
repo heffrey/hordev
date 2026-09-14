@@ -4,8 +4,8 @@
 # hordev is supposed to get better at its own job, and reflection that depends
 # on an agent remembering to reflect does not happen. So the harness asks.
 #
-# Fires when the main agent finishes responding. Two things matter here and an
-# earlier version got both wrong:
+# Fires when the main agent finishes responding. Three things matter here and
+# earlier versions got all of them wrong:
 #
 #   1. Stop does not honor hookSpecificOutput.additionalContext -- that is the
 #      SessionStart/UserPromptSubmit mechanism. On Stop, stdout at exit 0 goes
@@ -14,8 +14,15 @@
 #   2. Blocking on Stop can loop. The harness sets stop_hook_active when it is
 #      already continuing from a Stop hook; bail out then, or the session never
 #      ends.
+#   3. isolating-horde-workspaces puts every run in .claude/worktrees/<name>/,
+#      so the run log is almost never in the main checkout. A hook that looks
+#      only at <project>/.hordev/ is silent on exactly the runs it exists for.
+#      Look in both, and stamp each log beside itself so one worktree's
+#      reflection does not suppress another's.
 #
-# Deliberately depends on nothing but bash.
+# Deliberately depends on nothing but bash and the POSIX tools every system has
+# (grep, sed, awk, sort). Never python, node, or jq: an earlier hook shelled out
+# to python3 and failed on every session where it was missing.
 set -uo pipefail
 
 input=$(cat 2>/dev/null || true)
@@ -26,16 +33,126 @@ case "$input" in
 esac
 
 PROJECT="${CLAUDE_PROJECT_DIR:-$PWD}"
-LEDGER="$PROJECT/.hordev/run-log.md"
-STAMP="$PROJECT/.hordev/.reflected"
+# A session isolated in a worktree may report the worktree as its project.
+# Reflection covers the whole project either way.
+ROOT="${PROJECT%%/.claude/worktrees/*}"
 
-[ -r "$LEDGER" ] || exit 0
+json_escape() {
+  local s=$1
+  s=${s//\\/\\\\}
+  s=${s//\"/\\\"}
+  s=${s//$'\t'/\\t}
+  s=${s//$'\r'/\\r}
+  s=${s//$'\n'/\\n}
+  printf '%s' "$s"
+}
 
-# Speak only when the run log grew since the last reflection, so a session that
-# ends twenty times does not get asked twenty times.
-if [ -e "$STAMP" ] && [ ! "$LEDGER" -nt "$STAMP" ]; then
+# Every run log this hook sees goes into a user-level index, so Reflect can count
+# a failure class across projects instead of within one log. Best effort: a
+# read-only home costs the cross-run view, never the session.
+INDEX_DIR="${HORDEV_HOME:-${HOME:+$HOME/.claude/hordev}}"
+register() {
+  [ -n "$INDEX_DIR" ] || return 0
+  mkdir -p "$INDEX_DIR" 2>/dev/null || return 0
+  grep -qxF "$1" "$INDEX_DIR/runs.md" 2>/dev/null ||
+    printf '%s\n' "$1" >> "$INDEX_DIR/runs.md" 2>/dev/null || true
+}
+
+logs=""
+for log in "$ROOT/.hordev/run-log.md" "$ROOT"/.claude/worktrees/*/.hordev/run-log.md; do
+  # An unmatched glob stays literal and fails this test.
+  [ -r "$log" ] || continue
+  register "$log"
+  logs="$logs$log"$'\n'
+done
+
+# Self-improvement is meant to stop once hordev is good enough. improving-hordev
+# defines "good enough" (When reflection goes dormant); this implements it.
+#
+#   HORDEV_REFLECT=auto   default: dormant once converged, awake on a recurrence
+#   HORDEV_REFLECT=on     always reflect when a log grows
+#   HORDEV_REFLECT=off    never block; logs are still indexed
+MODE="${HORDEV_REFLECT:-auto}"
+RUNS="${HORDEV_CONVERGE_RUNS:-10}"
+PROJECTS="${HORDEV_CONVERGE_PROJECTS:-3}"
+PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
+TALLY="$PLUGIN_ROOT/skills/improving-hordev/tally-classes.sh"
+MARKER="${INDEX_DIR:+$INDEX_DIR/dormant}"
+
+[ "$MODE" = off ] && exit 0
+
+# Tally the most recent $RUNS indexed logs that still exist. Prints the tally, or
+# nothing if there is no index or no tally script to run.
+recent_tally() {
+  [ -n "$INDEX_DIR" ] && [ -r "$INDEX_DIR/runs.md" ] && [ -r "$TALLY" ] || return 0
+  local window
+  window=$(grep -vE '^[[:space:]]*(#|$)' "$INDEX_DIR/runs.md" |
+    while IFS= read -r p; do [ -r "$p" ] && printf '%s\n' "$p"; done | tail -n "$RUNS")
+  [ -n "$window" ] || return 0
+  set --
+  while IFS= read -r p; do set -- "$@" "$p"; done <<< "$window"
+  printf 'LOGS %s\n' "$#"
+  printf 'PROJECTS %s\n' "$(printf '%s\n' "$window" |
+    sed -e 's#/\.claude/worktrees/.*##' -e 's#/\.hordev/run-log\.md$##' | sort -u | grep -c .)"
+  bash "$TALLY" "$@" 2>/dev/null
+}
+
+state="awake"
+if [ "$MODE" = auto ]; then
+  tally=$(recent_tally)
+  recurring=$(printf '%s\n' "$tally" | grep 'recurring:' | awk '{ print $1 }' | tr '\n' ' ')
+  recurring=${recurring% }
+  if [ -n "$MARKER" ] && [ -e "$MARKER" ]; then
+    # Dormant stays dormant until a class recurs. Worktrees removed from under
+    # the window are not a reason to wake.
+    [ -z "$recurring" ] && state="dormant" || state="woke"
+  else
+    nlogs=$(printf '%s\n' "$tally" | awk '$1 == "LOGS" { print $2 }')
+    nprojects=$(printf '%s\n' "$tally" | awk '$1 == "PROJECTS" { print $2 }')
+    if [ "${nlogs:-0}" -ge "$RUNS" ] && [ "${nprojects:-0}" -ge "$PROJECTS" ] &&
+       [ -z "$recurring" ] &&
+       ! printf '%s\n' "$tally" | grep -qE '^(unclassified|unparseable) '; then
+      state="converging"
+    fi
+  fi
+fi
+
+case "$state" in
+  dormant) exit 0 ;;
+  converging)
+    touch "$MARKER" 2>/dev/null || exit 0
+    msg="hordev: self-improvement has converged. The last $RUNS run logs, across $nprojects projects, have no failure class at the recurring bar, so reflection is now dormant and this hook stays quiet. It wakes by itself if a class recurs. HORDEV_REFLECT=on forces reflection; =off silences it for good."
+    printf '{"systemMessage":"%s"}\n' "$(json_escape "$msg")"
+    exit 0
+    ;;
+  woke)
+    rm -f "$MARKER" 2>/dev/null || true
+    ;;
+esac
+
+grown=""
+while IFS= read -r log; do
+  [ -n "$log" ] || continue
+  # Speak only when this log grew since its last reflection, so a session that
+  # ends twenty times does not get asked twenty times.
+  stamp="$(dirname "$log")/.reflected"
+  if [ -e "$stamp" ] && [ ! "$log" -nt "$stamp" ]; then
+    continue
+  fi
+  touch "$stamp" 2>/dev/null || true
+  grown="${grown:+$grown, }${log#"$ROOT"/}"
+done <<< "$logs"
+
+if [ "$state" = woke ]; then
+  lead="hordev: reflection is awake again: $recurring reached the recurring bar in the last $RUNS runs${grown:+ ($grown grew)}."
+elif [ -n "$grown" ]; then
+  lead="hordev: run log grew since the last reflection ($grown)."
+else
   exit 0
 fi
-touch "$STAMP" 2>/dev/null || true
 
-printf '{"decision":"block","reason":"hordev: .hordev/run-log.md grew since the last reflection. Invoke the improving-hordev skill and decide whether anything in this run should change a skill. Amend on a repeated failure, not a one-off. If nothing clears that bar, say so in one line and stop."}\n'
+# The procedure is owned by using-hordev's Reflect stage. This text quotes it
+# word for word, and tests/reflect-hook.test.sh fails if the two drift.
+reason="$lead If a run is still in progress, finish it first. Then run the Reflect stage from using-hordev: Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes."
+
+printf '{"decision":"block","reason":"%s"}\n' "$(json_escape "$reason")"

@@ -158,7 +158,7 @@ so that is the skill it will tighten.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 when a bug class repeats across runs — the same seam breaking, the same kind of
 fake test. A recurring bug means a skill is under-specified, not that the code
 was unlucky.

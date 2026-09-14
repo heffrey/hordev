@@ -83,9 +83,10 @@ You see the open ones at the end of a run. That ledger is the contract that
 makes skipping the interview defensible instead of reckless.
 
 **Cheap agents do the volume, strong agents do the judgment.** Specs, TDDs, and
-implementation run on Haiku; orchestration, decomposition, reconciliation, and
-QA run on Opus. Reaching for the strongest model everywhere defeats the purpose
-of a horde.
+implementation run on Haiku; reflection and bounded judgment on existing code
+(removing a feature, scaffolding choices, tone-sensitive copy) on Sonnet;
+orchestration, decomposition, reconciliation, and QA on Opus. Reaching for the
+strongest model everywhere defeats the purpose of a horde.
 
 ### It improves itself
 
@@ -99,6 +100,12 @@ high: amend on a repeated failure, never on a one-off. `improving-hordev` maps
 symptoms back to the skill that probably needs the edit — seam bugs usually
 mean the decomposition rules are too loose, agents returning plans instead of
 code mean the dispatch prompt contract is weak.
+
+Failures are counted by class across every project that has run hordev, not
+per log, so the same mistake in two codebases counts as the repeat it is. And
+it stops: once the ten most recent runs, across at least three projects, repeat
+no failure class, the hook says so once and goes quiet. It wakes by itself if a
+class starts recurring again. `HORDEV_REFLECT=on` or `off` overrides it.
 
 ### It talks like a horde
 
@@ -129,12 +136,15 @@ Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.6.1.
+Early. Version 0.7.0.
 
-The skills are written, and both hooks now run inside live Claude Code
-sessions: `session-start.sh` injects the entrypoint skill at startup, and
-`reflect.sh` blocks once on Stop when the run log has grown, then stays silent
-behind its `stop_hook_active` guard and its `.hordev/.reflected` stamp.
+The skills are written, and both hooks run inside live Claude Code sessions:
+`session-start.sh` injects the entrypoint skill at startup, and `reflect.sh`
+blocks once on Stop when a run log has grown — in the main checkout or in any
+`.claude/worktrees/*/` — then stays silent behind its `stop_hook_active` guard
+and a `.reflected` stamp beside each log. Before 0.7.0 it looked only in the
+main checkout, so it never fired for a run isolated in a worktree. `tests/run.sh`
+exercises both against fixture projects.
 
 The self-improvement loop has closed at least once on its own output — the
 amendments in 0.4.0 came out of a run logged in `.hordev/run-log.md` — but the

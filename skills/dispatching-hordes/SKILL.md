@@ -42,9 +42,31 @@ Every item below is load-bearing.
    edits the user's checkout.
 10. **Open assumptions.** The IDs and `Decided` lines from
     `.hordev/assumptions.md` bearing on this component. An agent that does not
-    know what was assumed will contradict it. Only cite IDs that exist.
+    know what was assumed will contradict it. Only cite IDs that exist; see
+    `assumption-ledger`.
 11. **Prohibitions, stated twice** — once where they belong and once in the
     closing lines. See below.
+
+### A skill's budget holds unless the prompt says otherwise, out loud
+
+A length or scope budget named in a skill (a spec's word count, a TDD's unit
+size) is the budget the agent gets. To give a task a different one, put the
+number in its prompt and append a run-log entry, `CLASS: budget-overrun`, saying
+which budget and why. A prompt that quietly authorized 500-1,000-word specs is
+how a 300-400 budget turned into 2,000-word specs with nobody having decided
+it. Logged overrides are also how Reflect learns a budget is wrong.
+
+### Save every prompt before you send it
+
+Write each prompt to `.hordev/dispatch/<task>.md`, exactly as the agent will
+receive it, before dispatching. Then run `assumption-ledger`'s `check-ids.sh`
+over `.hordev/` and do not send the wave until it passes.
+
+A prompt that exists only in a tool call cannot be checked and cannot be read
+back. Assumption IDs that were never written have turned up only in unsaved
+prompts, where no check could see them, and debugging an agent's output
+repeatedly came down to "what exactly was it told?" with no record to answer
+from.
 
 ### 5, expanded: name the command, demand the output
 
@@ -143,8 +165,8 @@ Agent({
 })
 ```
 
-- **Haiku:** Implementation tasks (write code, pass tests). Mechanical work with clear specs
-- **Opus:** Orchestration, reconciliation, decomposition (NOT dispatched; you do it)
+Which model a task gets — `haiku`, `sonnet`, or `opus` — is `using-hordev`'s
+Model assignment table. Opus work is not dispatched; you do it.
 
 Never omit `model`. Inheriting your session default defeats cost and speed.
 
@@ -160,6 +182,23 @@ Never omit `model`. Inheriting your session default defeats cost and speed.
 - 20+ agents: large hordes → consider 2-3 waves if memory/token limits become real
 
 A single wave of 50 independent agents is fine. Sequential dispatch of 5 agents (one per response) is wasteful.
+
+### Check the machine before a wide wave
+
+The horde does not run alone. Before any wave that shares the machine with
+running services (a local database stack, dev servers, a worker), check free
+memory against what those services and the agents' builds and test runs will
+need. Ten-plus agents, a local database stack of about 1.8GB and three dev
+servers exhausted memory and the OS killed every server, twice. If it will not
+fit, stop services the run does not use, or split the wave. Parallelism is the
+default; a wave the OS kills halfway is not parallel, it is lost.
+
+**A deliberate mitigation is state, not a to-do.** When you stop a service or
+shrink a wave to fit, record it as an entry in `.hordev/assumptions.md` with the
+reason and what would make it safe to undo. The second kill in that run was
+self-inflicted: containers stopped on purpose were restored later to tick a
+task off, putting back the memory freed for exactly this reason. Read the entry
+before undoing anything that looks like an unfinished job.
 
 ## Failure Handling
 
@@ -233,7 +272,7 @@ Dispatch Wave 1 now. Stage Wave 2 prompts while Wave 1 runs.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 whenever an agent returns nothing, returns a plan instead of code, reports
 BLOCKED, or has to be re-dispatched. Note the re-dispatch rate for the run.
 

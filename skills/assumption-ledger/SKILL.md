@@ -82,6 +82,25 @@ Falsified by: If load tests show API latency exceeds SLA without cache.
 Status: open
 ```
 
+## Never Cite an Assumption You Have Not Written
+
+An ID in a spec, a TDD, or a dispatch prompt is a promise that the entry exists.
+Cite one you never wrote and every later stage behaves as though the decision
+were on record, while the user, reading the ledger, never sees it: a decision
+made on their behalf and then hidden. That is the failure this ledger exists to
+prevent, and it has happened in prompts where no spec mentioned the ID at all.
+
+Write the entry first, then cite it. Before any wave is dispatched, run
+`check-ids.sh` from this skill's directory:
+
+```bash
+check-ids.sh .hordev      # fails on any cited ID with no "## <ID>:" heading
+```
+
+It reads every artifact under `.hordev/` except the run log, including the
+saved dispatch prompts. A failure means write the missing entries, not delete
+the citation.
+
 ## What Earns an Entry
 
 **Test**: Would a reasonable user have answered this differently, and would
@@ -115,6 +134,17 @@ Then build. If the user corrects it, you have lost minutes rather than a run.
 If they say nothing, you were right or they did not care — both fine.
 
 This is the whole discipline in miniature: surface the bet, do not wait on it.
+
+**New infrastructure is Existential by default.** An assumption that introduces
+a new infrastructure class — persistence, user accounts, a new deployable, a new
+vendor — is `Existential` unless the entry states why it is not. The costliest
+call in one run read "a marketplace to meet vetted coaches" as a database,
+accounts, in-app messaging and crisis detection. It was specified, built and
+tested, then removed when the user saw it: out of proportion for a one-person
+product. It was never announced, and was written to the ledger only after it
+was undone, while a far smaller call in the same run ("the community is a
+Reddit forum") was announced. Scope by blast radius, and infrastructure is
+where the blast radius lives.
 
 ## Status Lifecycle
 

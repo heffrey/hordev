@@ -65,13 +65,14 @@ tool.
 
 ## Status
 
-Version 0.6.1. The plugin manifest, both hooks, and the skill library exist. There is no
-build step and no test suite yet — validation is currently reading the files and checking
-that hooks emit valid JSON. Both hooks have now fired in live sessions.
+Version 0.7.0. The plugin manifest, both hooks, and the skill library exist. There is no
+build step. `tests/run.sh` runs a dependency-free bash suite that exercises both hooks and
+every script beside a skill against fixture projects; run it before committing a change to
+any of them. Skill prose itself is still validated by reading it.
 
-The self-improvement loop has produced one round of amendments (0.4.0, from the run logged
-in `.hordev/run-log.md`), but the library has not been run across enough different projects
-to have learned much yet.
+The self-improvement loop has produced several rounds of amendments, and since 0.7.0 counts
+failures by class across every project's run log. It has still run across only a handful of
+projects.
 
 ## Releasing
 
@@ -95,8 +96,9 @@ If prose around a version string is reworded, `version.sh` fails loudly with the
 stopped matching. Fix the pattern in the `SITES` array — do not drop the site, or the next
 bump skips that file while reporting success, which is the failure this replaces.
 
-Tag every release: `git tag -a v<version>` and push with `--follow-tags`. Tags v0.2.0
-through v0.5.0 exist; v0.3.0 and v0.4.0 were tagged retroactively.
+Tag every release: `git tag -a v<version>` and push with `--follow-tags`. Every release
+from v0.2.0 is tagged; v0.2.0 through v0.4.0 were tagged retroactively. Add the release to
+`CHANGELOG.md` in the content commits, before the `Release` commit.
 
 ## Target architecture
 
@@ -159,6 +161,11 @@ decides:
   high-volume, well-scoped, template-shaped artifacts. Producing them fast and in parallel
   matters more than producing them perfectly; the prototype and QA catch what is wrong. This
   is also what makes horde-sized fan-out affordable.
+- **Sonnet 5 (`claude-sonnet-5`, `model: "sonnet"`) — Reflect, and bounded judgment on
+  existing code.** Work with a clear end state whose failure no test would catch: removing a
+  feature across files others wrote, scaffolding version choices, tone-sensitive copy. Haiku's
+  misses there were expensive; opus is more than the task needs. The Reflect stage runs here
+  because its output is a proposal read before it is applied.
 - **Opus 5 (`claude-opus-5`, `model: "opus"`) — orchestration and QA.** Decomposing work so
   agents stay independent, dispatching the horde, and reconciling what comes back are the
   judgment-heavy steps, and they are the ones that fail expensively. QA sits here for the same

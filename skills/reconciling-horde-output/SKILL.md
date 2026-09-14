@@ -122,7 +122,7 @@ acceptance criteria, and performance checks that reconciliation does not cover.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 for every seam collision, duplicated helper, and silently stubbed task you find.
 Mark `COST: systemic` when the same class appeared in an earlier run — that is
 what clears the amendment bar.

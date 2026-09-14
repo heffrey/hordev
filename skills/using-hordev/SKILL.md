@@ -134,12 +134,17 @@ and cannot hand off to the next stage. So:
 4. **Swarm.** You dispatch the horde, then run `reconciling-horde-output`
    yourself when it returns.
 5. **Verify.** You run `horde-qa` yourself.
-6. **Reflect.** Dispatch one `sonnet` agent with the `improving-hordev` skill
-   text and the path to `.hordev/run-log.md`. It returns a path to
-   `.hordev/proposed-amendments.md`. It may not edit a skill — that is yours,
-   and it is the one guardrail against hordev quietly rewriting itself. Sonnet
-   rather than opus because the output is a proposal you read before applying;
-   a wrong tally costs a read, not a corrupted library.
+6. **Reflect.** Dispatch one sonnet agent with the improving-hordev skill text
+   and the run log paths. It writes .hordev/proposed-amendments.md beside the
+   run log and edits no skill; you apply or decline what it proposes.
+
+   This is the only description of how reflection runs. The `Stop` hook
+   (`hooks/reflect.sh`) is a trigger: when a run log has grown it quotes the
+   sentence above and names the logs, and that is all it does. Once hordev has
+   converged it goes quiet on its own; `improving-hordev` defines when. Editing a skill
+   stays yours — the one guardrail against hordev quietly rewriting itself.
+   Sonnet rather than opus because the output is a proposal you read before
+   applying; a wrong tally costs a read, not a corrupted library.
 
 If a stage's agent returns something unusable, re-dispatch a fresh agent with an
 amended prompt. There is no resuming a finished agent — it has no context left
@@ -195,7 +200,13 @@ Model choice is architecture here, not a per-task judgment call.
 | Work | Model | Why |
 |---|---|---|
 | Specs, TDDs, implementation tasks | `haiku` | High volume, well-scoped, template-shaped. Speed and parallelism beat polish; QA catches the rest. This is what makes horde-sized fan-out affordable. |
+| Reflect; bounded judgment on existing code — removing or reshaping a feature across files others wrote, scaffolding choices such as framework and dependency versions, user-facing copy where tone carries risk | `sonnet` | Bounded, but a wrong result is a judgment no TDD test catches. Haiku's costly misses here: a new app scaffolded on React 18 beside a Next 16 app on 19, and a siren emoji marking a person in distress in a mental-health UI. |
 | Orchestration, decomposition, reconciliation, QA | `opus` | Judgment-heavy and expensive to get wrong. QA lives here because nothing else is checking the design. |
+
+A task belongs on `sonnet` when you can state its end state in a sentence but
+cannot write a test that fails if it is done tastelessly or on the wrong
+version. If a test could catch it, it is `haiku` work; if it decides the shape
+of the run, it is yours.
 
 Set `model` explicitly when dispatching. Do not inherit the session default —
 the split has to hold regardless of how the session was configured.
@@ -225,6 +236,7 @@ A run leaves these behind, in the project root:
 | `.hordev/specs/<feature-name>.md` | `rapid-spec` | The spec |
 | `.hordev/tdds/<feature-name>.md` | `writing-tdds` | Test-driven design |
 | `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
+| `.hordev/dispatch/<task>.md` | `dispatching-hordes` | Every agent prompt, exactly as sent |
 | `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
 | `.hordev/proposed-amendments.md` | `improving-hordev` | Amendments the Reflect stage proposes; the orchestrator applies or declines |
 

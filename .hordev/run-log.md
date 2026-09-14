@@ -1,6 +1,7 @@
 # hordev run log
 
-Append-only. Format defined by `improving-hordev`.
+Append-only. Format defined by `improving-hordev`. CLASS was added in 0.7.0 and
+back-filled into the entries below; nothing else in them changed.
 
 ---
 
@@ -9,6 +10,7 @@ initial skill library, cannibalizing superpowers skills as source material.
 All 12 produced usable files; none returned a plan instead of content.
 SKILL: dispatching-hordes
 COST: one-off
+CLASS: other
 RULE:
 ---
 
@@ -17,6 +19,7 @@ asked. 4 of 12 committed, 8 did not, producing an inconsistent history and
 concurrent writes to one index. Nothing was lost, but only by luck.
 SKILL: dispatching-hordes
 COST: one-off
+CLASS: agent-git
 RULE: The horde agent prompt contract must state who commits. Default: agents
 write files only, the orchestrator commits.
 ---
@@ -27,6 +30,7 @@ invented a one-line assumption format that contradicted the fuller entry
 format defined by assumption-ledger. Caught in QA at the seam.
 SKILL: decomposing-for-hordes
 COST: one-off
+CLASS: format-drift
 RULE: Shared artifact paths and file formats are interfaces. The orchestrator
 fixes them before dispatch and inlines them in every agent prompt.
 ---
@@ -36,6 +40,7 @@ with a section title duplicated at top level. Re-dispatched with specific
 defects; returned at 194 lines, still over budget but coherent.
 SKILL: dispatching-hordes
 COST: one-off
+CLASS: budget-overrun
 RULE:
 ---
 
@@ -45,6 +50,7 @@ describing its own capabilities). Both would have failed to fire in situations
 they are meant for.
 SKILL: writing-hordev-skills
 COST: one-off
+CLASS: format-drift
 RULE:
 ---
 
@@ -52,6 +58,7 @@ EVENT: The skill forbidding machine-specific paths in a public repo contained a
 machine-specific path in its own example.
 SKILL: writing-hordev-skills
 COST: one-off
+CLASS: other
 RULE:
 ---
 
@@ -61,6 +68,7 @@ appearance of the same commit-ownership defect, so it clears the repeat bar.
 Both skills now say agents do not run git and the orchestrator commits.
 SKILL: decomposing-for-hordes
 COST: systemic (2 times)
+CLASS: duplicate-rule
 RULE: When two skills describe the same shared resource, one of them owns the
 rule and the other links to it. Never state it twice.
 ---
@@ -70,6 +78,7 @@ what keeps a spec attached to a reviewable, revertible branch, which is the
 SDD tenet hordev keeps. The unit of isolation is a track of work, not an agent.
 SKILL: isolating-horde-workspaces
 COST: one-off
+CLASS: other
 RULE:
 ---
 
@@ -79,5 +88,16 @@ by validating the JSON payload shape separately. Still unproven in a live
 session.
 SKILL: horde-qa
 COST: one-off
+CLASS: green-but-broken
+RULE:
+---
+
+EVENT: Declined from an improvement brief built on two runs: moving QA to
+sonnet. It was chosen by hand once in a product run. With no approval gate on
+specs or TDDs, verification is the only check on the design, so QA stays on
+opus; sonnet was added for bounded judgment on existing code instead.
+SKILL: using-hordev
+COST: one-off
+CLASS: other
 RULE:
 ---

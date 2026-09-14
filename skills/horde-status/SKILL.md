@@ -47,9 +47,9 @@ The six stages, with the current one marked. One line.
 Extract ✓ → Design ✓ → Cut ✓ → Swarm ◈ → Verify ○ → Reflect ○
 ```
 
-`✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. Never mark Verify `✓` on the horde's own say-so.
+`✓` complete, `◈` in progress, `○` not started, `✗` failed or sent back. A stage skipped deliberately is `–` with a reason on the next line. `Design –` also names its consequence there: Verify checks the code against the spec alone, which `horde-qa` calls weaker. Never mark Verify `✓` on the horde's own say-so.
 
-Reflect is the automatic post-run stage: a sonnet agent reads the run log and proposes amendments. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
+Reflect is the post-run stage `using-hordev` defines. Mark it `○` until it has returned, and say in one line what it proposed — or that nothing repeated and no amendment was earned.
 
 ### 3. Task table
 
@@ -133,6 +133,8 @@ Whichever apply, in this order:
 The session supplies the tasks. The **working tree** supplies the truth about them.
 
 An agent's report is a claim. Before writing a percentage above 65, check it yourself — run the test file, read the diff, confirm the file exists. `git status` and `git log` in the worktree corroborate; the agent's summary does not.
+
+**A running service is checked at the moment you write the report.** Any dev server, database, or worker the report names as up gets a live check now — a request that answers, a port that is listening — not a memory of one from earlier. A run reported "all green" minutes after the OS had killed the servers it listed. What counts as an observation is `horde-qa` step 3.
 
 When an agent's claim and the tree disagree, report the tree and say the agent claimed otherwise. "Agent reported 9/9 passing; the test file does not exist" is the most useful line such a report can contain.
 

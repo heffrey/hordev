@@ -58,24 +58,23 @@ the TDD; they say nothing about whether the TDD was aimed at the right target.
 All three must pass. Q0 failure means the run was aimed wrong. Q1 failure means
 an agent didn't finish. Q2 failure means the design was wrong all along.
 
+**No TDD, because Design was skipped:** Q1 and Q2 collapse into one question —
+does the code do what the spec says? Check it against the spec's success
+criteria and edge cases directly, and skip checklist step 4. Say plainly in the
+report that the code was verified against the spec alone. That is weaker: no
+test was written from the spec before the code existed, so the suite tests what
+the agents built, not what was asked for.
+
 ## Verifying at Horde Scale
 
-Cheap-invalidating-first: run tests first, then target inspection.
-
-**Run tests immediately.** 0 pass = agent didn't write runnable code. Stop.
+Cheapest invalidation first: the suite (checklist 0-2), then the real path
+(3), then the design (4-5). Zero passing tests means no runnable code; stop.
 
 **Inspect fast.** Don't re-read all implementation. Target:
 - Files where agent returned suspiciously terse or fast responses
 - Seams between modules (agent may have stubbed integration)
 - Code marked "TODO" or "FIXME"
 - Anything the TDD called an assumption
-
-**Exercise the actual path.** Don't trust README examples. Start the app, click
-the button, enter real data. Run the tool end-to-end the way users will.
-
-**Check TDD assumptions against spec.** Open both files. For each assumption
-the TDD listed, verify the spec actually makes that assumption. If the spec
-doesn't mention it, check it against the prototype.
 
 ## Checklist (in order)
 
@@ -112,7 +111,27 @@ doesn't mention it, check it against the prototype.
      actually occurs (stored rows, captured requests), not only on the TDD's
      examples.
 
-3. **User path works:** Actual application start, real interaction.
+3. **The real path, observed in the real runtime.** Required, never inferred
+   from the steps above. Green-but-broken is the largest failure class in
+   hordev's history. In one run, with typecheck, lint, tests and build green
+   throughout: a second app shipped unstyled because its CSS pipeline never
+   compiled; analytics went to a regional host that answers HTTP 200 and
+   discards the event; session replay loaded despite autocapture being off;
+   sign-in failed with a bare 500 from NULL columns in seed data; a magic link
+   redirected to the wrong app; a no-JavaScript form posted urlencoded to a
+   JSON-only parser. Each was visible within a minute of using the thing.
+   - Run it where users run it: a browser with the network panel open, `curl`
+     against the running server, a real sign-in. Put the observation in the
+     report — the command and what it printed, the request and its status.
+     "Works" with no observation is a claim.
+   - **Name the negative control.** For each critical claim, write down the
+     observation that would differ if the feature were broken, and check that
+     one. "No errors" is never it: analytics that sends nothing has no errors.
+     The control is the event arriving at the ingest host; a computed style on
+     a real element; the request a privacy guarantee says must not appear. A
+     suite whose result is the same whether the feature works or does nothing
+     does not cover the feature — an analytics allowlist suite passed whether
+     or not a single event was ever sent.
    - STOP if core path breaks. Fix and verify.
    - "There is no runnable path" is not an answer until you have priced a
      synthetic client (a scripted HTTP caller, a software authenticator, a fake
@@ -124,8 +143,9 @@ doesn't mention it, check it against the prototype.
    it or explicitly assumes it won't be tested.
    - If silent gap: check prototype handles it. If not, escalate to `rapid-spec`.
 
-5. **Assumptions hold:** For each assumption in TDD, verify spec makes it or
-   prototype handles it safely.
+5. **Assumptions hold:** Open the TDD and the spec together. For each
+   assumption the TDD lists, verify the spec makes it or the prototype handles
+   it safely.
    - If assumption was wrong, escalate to `rapid-spec`.
    - For every entry that names a risk and a mitigation, list each branch the
      mitigation can take, including the one where it fires on a legitimate
@@ -147,6 +167,11 @@ doesn't mention it, check it against the prototype.
 | Assumption checked | "Per TDD" | Verify against spec, not TDD |
 | Tests meaningful | "94% pass rate" | Read assertions, not count |
 | Integration works | "Modules integrated" | Run real workflow, not unit tests |
+| Verified | "21/21 passing" | Re-run with the project's command; a true claim under a runner the agent chose proves nothing |
+| Exact count | "157 canonical entries" | Count it yourself; there were 156, and the agent had no way to notice |
+| Build is clean | "Build succeeds" | Look at it running (step 3); a build passes with the styling pipeline inert |
+| Found a problem | "Encoding issues" | Reproduce it before acting on it; a confident false alarm sends QA the wrong way |
+| Obeyed prohibitions | "No git commands run" | Check `git reflog` and the index; an agent that ran git and unwound it can still say this |
 
 ## What to Do on Failure
 
@@ -197,7 +222,9 @@ three things:
    first, in the format `assumption-ledger` defines. Never omit these because
    the tests passed; a passing suite proves the code matches the TDD, not that
    the assumptions behind it were right.
-3. **The branch** the work is on, so the user can review or discard it whole.
+3. **The branch** the work is on, so the user can review or discard it whole —
+   one per repository when the run spans more than one (see
+   `isolating-horde-workspaces`).
 
 Do not merge, push, or delete the branch. Hand it over and let the user decide.
 
@@ -219,7 +246,7 @@ Do NOT leave systemic issues unreported. They will cascade to next horde run.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 for every defect that escaped reconciliation, every assumption falsified here,
 and every case where the TDD itself was wrong. These are the entries that
 matter most: they are where hordev's speed bet lost, and they are exactly what
