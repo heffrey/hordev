@@ -165,8 +165,8 @@ Agent({
 })
 ```
 
-- **Haiku:** Implementation tasks (write code, pass tests). Mechanical work with clear specs
-- **Opus:** Orchestration, reconciliation, decomposition (NOT dispatched; you do it)
+Which model a task gets — `haiku`, `sonnet`, or `opus` — is `using-hordev`'s
+Model assignment table. Opus work is not dispatched; you do it.
 
 Never omit `model`. Inheriting your session default defeats cost and speed.
 

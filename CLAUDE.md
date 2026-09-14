@@ -159,6 +159,11 @@ decides:
   high-volume, well-scoped, template-shaped artifacts. Producing them fast and in parallel
   matters more than producing them perfectly; the prototype and QA catch what is wrong. This
   is also what makes horde-sized fan-out affordable.
+- **Sonnet 5 (`claude-sonnet-5`, `model: "sonnet"`) — Reflect, and bounded judgment on
+  existing code.** Work with a clear end state whose failure no test would catch: removing a
+  feature across files others wrote, scaffolding version choices, tone-sensitive copy. Haiku's
+  misses there were expensive; opus is more than the task needs. The Reflect stage runs here
+  because its output is a proposal read before it is applied.
 - **Opus 5 (`claude-opus-5`, `model: "opus"`) — orchestration and QA.** Decomposing work so
   agents stay independent, dispatching the horde, and reconciling what comes back are the
   judgment-heavy steps, and they are the ones that fail expensively. QA sits here for the same

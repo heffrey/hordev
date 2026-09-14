@@ -199,7 +199,13 @@ Model choice is architecture here, not a per-task judgment call.
 | Work | Model | Why |
 |---|---|---|
 | Specs, TDDs, implementation tasks | `haiku` | High volume, well-scoped, template-shaped. Speed and parallelism beat polish; QA catches the rest. This is what makes horde-sized fan-out affordable. |
+| Reflect; bounded judgment on existing code — removing or reshaping a feature across files others wrote, scaffolding choices such as framework and dependency versions, user-facing copy where tone carries risk | `sonnet` | Bounded, but a wrong result is a judgment no TDD test catches. Haiku's costly misses here: a new app scaffolded on React 18 beside a Next 16 app on 19, and a siren emoji marking a person in distress in a mental-health UI. |
 | Orchestration, decomposition, reconciliation, QA | `opus` | Judgment-heavy and expensive to get wrong. QA lives here because nothing else is checking the design. |
+
+A task belongs on `sonnet` when you can state its end state in a sentence but
+cannot write a test that fails if it is done tastelessly or on the wrong
+version. If a test could catch it, it is `haiku` work; if it decides the shape
+of the run, it is yours.
 
 Set `model` explicitly when dispatching. Do not inherit the session default —
 the split has to hold regardless of how the session was configured.

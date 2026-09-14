@@ -83,9 +83,10 @@ You see the open ones at the end of a run. That ledger is the contract that
 makes skipping the interview defensible instead of reckless.
 
 **Cheap agents do the volume, strong agents do the judgment.** Specs, TDDs, and
-implementation run on Haiku; orchestration, decomposition, reconciliation, and
-QA run on Opus. Reaching for the strongest model everywhere defeats the purpose
-of a horde.
+implementation run on Haiku; reflection and bounded judgment on existing code
+(removing a feature, scaffolding choices, tone-sensitive copy) on Sonnet;
+orchestration, decomposition, reconciliation, and QA on Opus. Reaching for the
+strongest model everywhere defeats the purpose of a horde.
 
 ### It improves itself
 
