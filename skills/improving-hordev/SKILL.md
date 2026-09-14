@@ -15,16 +15,41 @@ File: `.hordev/run-log.md` (append-only; maintained by running skills)
 One entry per notable event: an agent failure, a seam collision, an escaped defect,
 a missed assumption. Keep entries cheap to write — expensive logging does not happen.
 
-Each entry is exactly 4 lines:
+Each entry is five fields, in this order. EVENT and RULE may wrap onto
+continuation lines; nothing else goes in an entry.
 
 ```
 EVENT: <what happened; specific, 1-2 sentences>
 SKILL: <skill in play: rapid-spec, decomposing-for-hordes, dispatching-hordes, reconciling-horde-output, horde-qa, debugging-in-a-horde, etc>
-COST: <one-off | systemic; if systemic, count: (N times)>
+COST: <one-off | systemic (N times)>
+CLASS: <one class from the vocabulary below>
 RULE: <rule that would prevent it, or blank if none yet identified>
 ```
 
-Followed by `---` separator.
+Followed by `---` separator. Prose, headings, and tables are not entries: a log
+written that way cannot be tallied without re-reading every paragraph by hand,
+which is the cost the format exists to remove.
+
+### CLASS vocabulary
+
+SKILL says where a failure surfaced; CLASS says what kind of failure it was.
+The same class shows up under different skills and in different projects, and
+counting by class is how a repeat becomes visible across runs.
+
+| Class | Use when |
+|---|---|
+| `agent-git` | An agent ran git, or who commits was left unstated. |
+| `format-drift` | An artifact broke the format its owner skill defines, or cited something never written. |
+| `budget-overrun` | An artifact came back past its length or scope budget. |
+| `green-but-broken` | Every check passed and the real path did not work. |
+| `write-collision` | Two writers touched one write surface. |
+| `dispatch-gap` | Planned work was never dispatched, or went out missing what it needed. |
+| `spec-misread` | The spec aimed at the wrong target, and everything downstream agreed with it. |
+| `duplicate-rule` | Two skills state one rule, and the copies drift. |
+| `resource` | Memory, ports, disk, or another machine limit broke the run. |
+| `other` | None fits. Say why in EVENT. Three alike earn a new class here. |
+
+Pick one. An entry that fits two is usually two entries.
 
 ### Example entries
 
@@ -32,24 +57,21 @@ Followed by `---` separator.
 EVENT: Dispatched agent returned pseudo-code instead of implementation.
 SKILL: dispatching-hordes
 COST: one-off
+CLASS: dispatch-gap
 RULE:
 ---
 
 EVENT: Two agents wrote to same file without coordination; reconciliation 2h.
 SKILL: decomposing-for-hordes
 COST: systemic (3 times)
+CLASS: write-collision
 RULE: Assign file ownership explicitly in task context.
----
-
-EVENT: High-blast-radius assumption (schema choice) falsified in QA; 8h rework.
-SKILL: rapid-spec
-COST: systemic (2 times)
-RULE: For each architectural decision, ask "could this break at scale?"
 ---
 
 EVENT: Null-pointer error path never exercised until merge; CI gap exposed.
 SKILL: horde-qa
 COST: one-off
+CLASS: green-but-broken
 RULE:
 ---
 ```
@@ -74,6 +96,22 @@ Do NOT log:
 
 **Critical rule: change a skill on REPEATED failure only.** One expensive day is
 hordev's speed bet. Two identical failures is a signal hordev is missing a rule.
+
+**Count by CLASS, across every run you can see.** A failure that happens once in
+each of two projects is a repeat, and a per-log count never shows it. The `Stop`
+hook appends every run log it finds to a user-level index,
+`~/.claude/hordev/runs.md`, one path per line. Read those logs as well as the
+ones you were handed, then run `tally-classes.sh` from this skill's directory
+over the lot:
+
+```bash
+tally-classes.sh                 # every log in the index
+tally-classes.sh a.md b.md       # just these
+```
+
+It prints each class with its entry count, how many distinct logs it appears
+in, and the bar it clears. A path in the index that no longer exists (a removed
+worktree) is reported, not silently skipped.
 
 - **One-off**: Log it. Move on. Capture the cost, but do not amend.
 - **Systemic** (seen 2 times): Amend the skill. Add one rule.

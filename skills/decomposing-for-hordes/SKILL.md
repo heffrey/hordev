@@ -138,7 +138,7 @@ broken 1–4's typecheck if task 0 had not existed.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`) when a
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`) when a
 cut turns out wrong: two writers on one surface, a task too large for one agent, a
 missed dependency, or a planned task that never went out. Decomposition failures
 surface late and are easy to forget by the time they hurt.

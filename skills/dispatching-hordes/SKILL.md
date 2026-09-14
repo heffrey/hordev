@@ -233,7 +233,7 @@ Dispatch Wave 1 now. Stage Wave 2 prompts while Wave 1 runs.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 whenever an agent returns nothing, returns a plan instead of code, reports
 BLOCKED, or has to be re-dispatched. Note the re-dispatch rate for the run.
 

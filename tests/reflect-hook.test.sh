@@ -6,8 +6,10 @@ set -uo pipefail
 HOOK="${HOOK:-$REPO/hooks/reflect.sh}"
 OLD=202001010000   # a timestamp every freshly written file is newer than
 
+INDEX_HOME=$(scratch)   # never touch the real ~/.claude/hordev from a test
+
 run_hook() {  # run_hook <project-dir> [stdin]
-  printf '%s' "${2:-{\}}" | CLAUDE_PROJECT_DIR="$1" bash "$HOOK"
+  printf '%s' "${2:-{\}}" | CLAUDE_PROJECT_DIR="$1" HORDEV_HOME="$INDEX_HOME" bash "$HOOK"
 }
 
 entry() {
@@ -82,5 +84,16 @@ out=$(run_hook "$E"); status=$?
 assert_empty "project with no run log stays silent" "$out"
 assert_status "and exits 0" "$status" 0
 
-rm -rf "$P" "$Q" "$R" "$E"
+# Cross-run index: every log the hook has seen, once each, even when silent.
+index=$(cat "$INDEX_HOME/runs.md" 2>/dev/null)
+assert_contains "index lists a worktree log" "$index" "$P/.claude/worktrees/run-a/.hordev/run-log.md"
+assert_contains "index lists a main-checkout log" "$index" "$Q/.hordev/run-log.md"
+dupes=$(printf '%s\n' "$index" | sort | uniq -d)
+assert_empty "index has no duplicate paths after repeated Stops" "$dupes"
+
+# An unwritable index home costs the index, never the session.
+out=$(printf '{}' | CLAUDE_PROJECT_DIR="$Q" HORDEV_HOME="/dev/null/nope" bash "$HOOK"); status=$?
+assert_status "unwritable index home still exits 0" "$status" 0
+
+rm -rf "$P" "$Q" "$R" "$E" "$INDEX_HOME"
 finish

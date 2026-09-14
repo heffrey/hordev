@@ -219,7 +219,7 @@ Do NOT leave systemic issues unreported. They will cascade to next horde run.
 
 ## Log what went wrong
 
-Append a 4-field entry to `.hordev/run-log.md` (format in `improving-hordev`)
+Append an entry to `.hordev/run-log.md` (format in `improving-hordev`)
 for every defect that escaped reconciliation, every assumption falsified here,
 and every case where the TDD itself was wrong. These are the entries that
 matter most: they are where hordev's speed bet lost, and they are exactly what

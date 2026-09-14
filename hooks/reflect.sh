@@ -45,10 +45,22 @@ json_escape() {
   printf '%s' "$s"
 }
 
+# Every run log this hook sees goes into a user-level index, so Reflect can count
+# a failure class across projects instead of within one log. Best effort: a
+# read-only home costs the cross-run view, never the session.
+INDEX_DIR="${HORDEV_HOME:-${HOME:+$HOME/.claude/hordev}}"
+register() {
+  [ -n "$INDEX_DIR" ] || return 0
+  mkdir -p "$INDEX_DIR" 2>/dev/null || return 0
+  grep -qxF "$1" "$INDEX_DIR/runs.md" 2>/dev/null ||
+    printf '%s\n' "$1" >> "$INDEX_DIR/runs.md" 2>/dev/null || true
+}
+
 grown=""
 for log in "$ROOT/.hordev/run-log.md" "$ROOT"/.claude/worktrees/*/.hordev/run-log.md; do
   # An unmatched glob stays literal and fails this test.
   [ -r "$log" ] || continue
+  register "$log"
 
   # Speak only when this log grew since its last reflection, so a session that
   # ends twenty times does not get asked twenty times.
