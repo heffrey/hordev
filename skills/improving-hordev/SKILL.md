@@ -101,8 +101,15 @@ hordev's speed bet. Two identical failures is a signal hordev is missing a rule.
 each of two projects is a repeat, and a per-log count never shows it. The `Stop`
 hook appends every run log it finds to a user-level index,
 `~/.claude/hordev/runs.md`, one path per line. Read those logs as well as the
-ones you were handed, then run `tally-classes.sh` from this skill's directory
-over the lot:
+ones you were handed.
+
+**Validate before you tally.** Run `validate-run-log.sh` from this skill's
+directory on every log first. A malformed entry is not counted; it is reported
+at the top of your proposal with the problems the validator printed, then
+classified by reading so it still reaches the tally. A log that needed that has
+itself earned a `format-drift` entry.
+
+Then run `tally-classes.sh` over the lot:
 
 ```bash
 tally-classes.sh                 # every log in the index
