@@ -134,6 +134,8 @@ The session supplies the tasks. The **working tree** supplies the truth about th
 
 An agent's report is a claim. Before writing a percentage above 65, check it yourself — run the test file, read the diff, confirm the file exists. `git status` and `git log` in the worktree corroborate; the agent's summary does not.
 
+**A running service is checked at the moment you write the report.** Any dev server, database, or worker the report names as up gets a live check now — a request that answers, a port that is listening — not a memory of one from earlier. A run reported "all green" minutes after the OS had killed the servers it listed. What counts as an observation is `horde-qa` step 3.
+
 When an agent's claim and the tree disagree, report the tree and say the agent claimed otherwise. "Agent reported 9/9 passing; the test file does not exist" is the most useful line such a report can contain.
 
 ## Common mistakes
