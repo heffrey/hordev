@@ -183,6 +183,23 @@ Never omit `model`. Inheriting your session default defeats cost and speed.
 
 A single wave of 50 independent agents is fine. Sequential dispatch of 5 agents (one per response) is wasteful.
 
+### Check the machine before a wide wave
+
+The horde does not run alone. Before any wave that shares the machine with
+running services (a local database stack, dev servers, a worker), check free
+memory against what those services and the agents' builds and test runs will
+need. Ten-plus agents, a local database stack of about 1.8GB and three dev
+servers exhausted memory and the OS killed every server, twice. If it will not
+fit, stop services the run does not use, or split the wave. Parallelism is the
+default; a wave the OS kills halfway is not parallel, it is lost.
+
+**A deliberate mitigation is state, not a to-do.** When you stop a service or
+shrink a wave to fit, record it as an entry in `.hordev/assumptions.md` with the
+reason and what would make it safe to undo. The second kill in that run was
+self-inflicted: containers stopped on purpose were restored later to tick a
+task off, putting back the memory freed for exactly this reason. Read the entry
+before undoing anything that looks like an unfinished job.
+
 ## Failure Handling
 
 **Agent returns nothing / times out:** Re-dispatch with same prompt to a fresh agent. If it happens twice, something is wrong with the prompt (missing context, unclear task). Fix the prompt and re-dispatch.
