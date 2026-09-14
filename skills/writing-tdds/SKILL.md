@@ -62,7 +62,7 @@ def test_[behavior]():
 ## Implementation Notes
 
 [If spec was underdetermined on a decision point, log it here:
-"Decided X because Y. See assumption-ledger entry A-001."]
+"Decided X because Y. See assumption-ledger entry <TAG>-001."]
 
 [Any shared setup, fixtures, or test utilities needed across units.]
 ```
@@ -73,6 +73,18 @@ Each test is a contract for implementation. A horde agent receives
 the spec and this TDD — write tests to make behavior unambiguous.
 Good test names are specific (test_retry_stops_after_3_attempts, not
 test_retry_works). Concrete inputs, no mocks. One behavior per test.
+
+**Include an input that separates the plausible wrong behavior from the
+right one.** If every candidate implementation passes your examples, the suite
+defines nothing. A classifier tested only on inputs where the naive rule and the
+correct rule agree will lock in the naive rule.
+
+**Cross every boundary in one test.** When a value crosses a serialization,
+encoding, or protocol boundary, name at least one test that carries it across
+the whole boundary in one pass: produced the way the real client produces it,
+consumed by the real handler. Unit tests on each side do not count. A double
+decode on one side and an encoded-form comparison on the other both pass their
+own unit tests.
 
 ## Parallel-Safe Tests
 
@@ -114,7 +126,7 @@ If the spec is ambiguous, decide locally and log the assumption:
    Status** (see `assumption-ledger` skill for format)
 
 2. Reference it in "Implementation Notes": "Decided X because Y.
-   See assumption-ledger entry A-NNN."
+   See assumption-ledger entry <TAG>-NNN."
 
 3. Write the test reflecting your decision.
 

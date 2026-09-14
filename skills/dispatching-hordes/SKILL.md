@@ -111,8 +111,8 @@ WORKTREE: .claude/worktrees/horde-1730000000
 Work only inside this directory.
 
 OPEN ASSUMPTIONS (do not contradict):
-- A-002: Transaction amounts are integer cents, never floats.
-- A-007: No auth on internal endpoints for the prototype.
+- PAY-002: Transaction amounts are integer cents, never floats.
+- PAY-007: No auth on internal endpoints for the prototype.
 
 Implement directly. Do not write a plan. Write the code.
 

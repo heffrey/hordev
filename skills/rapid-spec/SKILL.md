@@ -77,6 +77,12 @@ against the IDs recorded.
    `.hordev/assumptions.md`, using the entry format defined by
    `assumption-ledger`. Do not invent a shorter format — `horde-qa` reads
    those fields.
+
+   Any name that must be unique across the repository (a migration number, a
+   ledger prefix, a route, an env var) is chosen against the default branch as
+   fetched now, not the branch point. Another run may be in flight and every
+   check you run locally will agree you are alone. Prefer a form that cannot
+   collide, such as a timestamp prefix, over the next integer.
 4. **Write the spec artifact** (see format below) to
    `.hordev/specs/<feature-name>.md`. It is short enough for one pass
    (~300-400 words total).

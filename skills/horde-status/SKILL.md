@@ -105,14 +105,14 @@ Read `.hordev/assumptions.md`. Report open entries **grouped by blast radius, la
 
 ```
 Falsified
-  A-004  tier shown once, never a progress view    → superseded by A-015
+  CO-004  tier shown once, never a progress view    → superseded by CO-015
 
 Existential
-  A-008  community is Reddit, not software we write        [open]
+  CO-008  community is Reddit, not software we write        [open]
 
 Large
-  A-005  analytics is PostHog, no content ever             [open]
-  A-003  tier changes Coach's register, not access         [open]
+  CO-005  analytics is PostHog, no content ever             [open]
+  CO-003  tier changes Coach's register, not access         [open]
 ```
 
 An **Existential** entry gets a sentence of plain English, not just its title — it is the one that invalidates the run if wrong.

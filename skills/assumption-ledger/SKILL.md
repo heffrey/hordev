@@ -32,7 +32,7 @@ entries. Falsified assumptions with large blast radii send you back to
 
 | Field        | Required | Content |
 |--------------|----------|---------|
-| ID           | yes      | `A-001`, `A-002`, etc. Immutable; status changes do not reassign IDs. |
+| ID           | yes      | `ED-001`, `ED-002`, etc. Immutable; status changes do not reassign IDs. |
 | Decided      | yes      | What was chosen (e.g., "SQLite for persistence"). Terse. |
 | Rationale    | yes      | Why in one sentence. If you need two sentences, it's underspecified. |
 | Rejected     | yes      | The alternative not chosen. If none existed, write "None"; that signals an innovation, not a dodge. |
@@ -40,10 +40,14 @@ entries. Falsified assumptions with large blast radii send you back to
 | Falsified by | yes      | How you will know this is wrong. Cite a test name, a prototype behavior, a specific user reaction, or "UAT". |
 | Status       | yes      | `open`, `confirmed`, or `falsified`. |
 
+**Prefix every ID with a short tag for the run** (`PK-001`, not `A-001`). The
+ledger file is shared by every run in the repository, and a bare sequence
+collides the moment a second run starts.
+
 **Example**:
 
 ```markdown
-## A-001: Text-first UI, no drag-and-drop
+## ED-001: Text-first UI, no drag-and-drop
 
 Decided: No drag-and-drop gestures; editing happens via a command palette and
 inline text.
@@ -62,7 +66,7 @@ Status: open
 
 ---
 
-## A-002: Fetch data on demand, no caching layer
+## ED-002: Fetch data on demand, no caching layer
 
 Decided: Every query hits the API; no local cache.
 
@@ -83,7 +87,7 @@ Status: open
 **Test**: Would a reasonable user have answered this differently, and would
 that change the build?
 
-- **Yes → Entry**. Example: `A-001` above. Users might demand drag-and-drop;
+- **Yes → Entry**. Example: `ED-001` above. Users might demand drag-and-drop;
   we decided against it. That's an assumption.
 - **No → Skip**. Example: Naming a button "Save" instead of "Submit". No
   reasonable user cares; it's not a decision, it's noise.
@@ -104,7 +108,7 @@ an answer costs more than the rebuild would. Instead, **say it once, in one
 line, before dispatching the horde, and keep going**:
 
 ```
-Assuming A-003: this is a CLI, not a service. Building on that now.
+Assuming ED-003: this is a CLI, not a service. Building on that now.
 ```
 
 Then build. If the user corrects it, you have lost minutes rather than a run.
@@ -144,17 +148,17 @@ At the end of each run, surface the ledger plainly:
 The following decisions were made without user approval:
 
 **Large blast radius:**
-- A-001: Text-first UI, no drag-and-drop [open]
-- A-005: SQLite backend, not PostgreSQL [open]
+- ED-001: Text-first UI, no drag-and-drop [open]
+- ED-005: SQLite backend, not PostgreSQL [open]
 
 **Medium blast radius:**
-- A-002: Fetch on demand, no caching [open]
+- ED-002: Fetch on demand, no caching [open]
 
 **Tiny/cosmetic:**
-- A-003: Button label "Save", not "Submit" [open]
+- ED-003: Button label "Save", not "Submit" [open]
 
 Review `.hordev/assumptions.md` for full details. If any assumption conflicts
-with your intentions, reply with the ID (e.g., "A-001 is wrong") and the
+with your intentions, reply with the ID (e.g., "ED-001 is wrong") and the
 intended behavior.
 ```
 
