@@ -77,7 +77,7 @@ Record the winner and the decision in `.hordev/assumptions.md` (use `assumption-
 
 Example assumption entry:
 ```
-ID: A-014
+ID: UI-014
 Decided: modal-ui beat inline-ui on the acceptance tests
 Rationale: modals carry multi-step workflows; inline hit the token
   limit before passing acceptance tests

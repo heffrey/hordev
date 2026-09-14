@@ -104,9 +104,21 @@ doesn't mention it, check it against the prototype.
 2. **Tests assert, don't stub:** Read test output and code. Are assertions
    meaningful or do they just check `x !== null`?
    - STOP if most tests are no-op stubs. Re-dispatch with `writing-tdds`.
+   - Read every test whose comment explains why a surprising result is correct.
+     That comment marks where the author noticed something odd and argued past
+     it. Check the assertion against the spec, not the implementation. A green
+     test can assert the bug, and then fixing the bug "breaks a test".
+   - For a function that classifies external input, run it on the input as it
+     actually occurs (stored rows, captured requests), not only on the TDD's
+     examples.
 
 3. **User path works:** Actual application start, real interaction.
    - STOP if core path breaks. Fix and verify.
+   - "There is no runnable path" is not an answer until you have priced a
+     synthetic client (a scripted HTTP caller, a software authenticator, a fake
+     webhook sender). If it costs under an hour, build it.
+   - When a defect is found mid-run, grep for every other instance of the same
+     class before fixing the one. The first fix makes the class look handled.
 
 4. **TDD matches spec:** Line-by-line. For each requirement in spec, TDD tests
    it or explicitly assumes it won't be tested.
@@ -115,6 +127,12 @@ doesn't mention it, check it against the prototype.
 5. **Assumptions hold:** For each assumption in TDD, verify spec makes it or
    prototype handles it safely.
    - If assumption was wrong, escalate to `rapid-spec`.
+   - For every entry that names a risk and a mitigation, list each branch the
+     mitigation can take, including the one where it fires on a legitimate
+     user, and confirm each was executed. A mitigation verified only in the
+     case it was designed for is unverified.
+   - For any harness you built, write down which real user it cannot simulate,
+     and cover that user.
 
 6. **No stubs left:** Grep for TODO, FIXME, stub, skip, xtest, xit. Escalate
    any agent claimed as finished.
