@@ -58,14 +58,8 @@ to surface, not something to quietly resolve in favour of the docs.
 
 ## Never Cite an Assumption You Have Not Written
 
-An assumption ID in a spec or a dispatch prompt is a promise that the entry
-exists. Cite one you never wrote and every later stage behaves as though the
-decision were on record while the user, reading the ledger, never sees it — a
-decision made on their behalf and then hidden. That is the exact failure the
-ledger exists to prevent.
-
-Write the entry first, then cite it. Before handing off, diff the IDs cited
-against the IDs recorded.
+Write the entry first, then cite it. `assumption-ledger` owns this rule and the
+check that enforces it.
 
 ## Process
 

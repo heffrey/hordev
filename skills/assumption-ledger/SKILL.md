@@ -82,6 +82,25 @@ Falsified by: If load tests show API latency exceeds SLA without cache.
 Status: open
 ```
 
+## Never Cite an Assumption You Have Not Written
+
+An ID in a spec, a TDD, or a dispatch prompt is a promise that the entry exists.
+Cite one you never wrote and every later stage behaves as though the decision
+were on record, while the user, reading the ledger, never sees it: a decision
+made on their behalf and then hidden. That is the failure this ledger exists to
+prevent, and it has happened in prompts where no spec mentioned the ID at all.
+
+Write the entry first, then cite it. Before any wave is dispatched, run
+`check-ids.sh` from this skill's directory:
+
+```bash
+check-ids.sh .hordev      # fails on any cited ID with no "## <ID>:" heading
+```
+
+It reads every artifact under `.hordev/` except the run log, including the
+saved dispatch prompts. A failure means write the missing entries, not delete
+the citation.
+
 ## What Earns an Entry
 
 **Test**: Would a reasonable user have answered this differently, and would

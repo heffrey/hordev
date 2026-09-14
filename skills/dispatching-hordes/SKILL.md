@@ -42,9 +42,22 @@ Every item below is load-bearing.
    edits the user's checkout.
 10. **Open assumptions.** The IDs and `Decided` lines from
     `.hordev/assumptions.md` bearing on this component. An agent that does not
-    know what was assumed will contradict it. Only cite IDs that exist.
+    know what was assumed will contradict it. Only cite IDs that exist; see
+    `assumption-ledger`.
 11. **Prohibitions, stated twice** — once where they belong and once in the
     closing lines. See below.
+
+### Save every prompt before you send it
+
+Write each prompt to `.hordev/dispatch/<task>.md`, exactly as the agent will
+receive it, before dispatching. Then run `assumption-ledger`'s `check-ids.sh`
+over `.hordev/` and do not send the wave until it passes.
+
+A prompt that exists only in a tool call cannot be checked and cannot be read
+back. Assumption IDs that were never written have turned up only in unsaved
+prompts, where no check could see them, and debugging an agent's output
+repeatedly came down to "what exactly was it told?" with no record to answer
+from.
 
 ### 5, expanded: name the command, demand the output
 

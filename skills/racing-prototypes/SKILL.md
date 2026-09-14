@@ -76,16 +76,22 @@ saw the alternatives.
 Record the winner and the decision in `.hordev/assumptions.md` (use `assumption-ledger` format). The entry should be: candidate ID, which axes differentiated them, which criteria favored the winner, and why it matters to the system. This is a decision the user never got asked about; assume-tracking makes it visible.
 
 Example assumption entry:
-```
-ID: UI-014
-Decided: modal-ui beat inline-ui on the acceptance tests
-Rationale: modals carry multi-step workflows; inline hit the token
-  limit before passing acceptance tests
-Rejected: inline-ui (failed tests), sidebar (untested)
+```markdown
+## UI-014: modal-ui beat inline-ui on the acceptance tests
+
+Decided: modal-ui, over inline-ui and sidebar.
+
+Rationale: modals carry multi-step workflows; inline hit the token limit
+before passing acceptance tests.
+
+Rejected: inline-ui (failed tests), sidebar (untested).
+
 Blast radius: Large — UI architecture is now locked; changing it means
-  refactoring state management
-Falsified by: users reporting the modal flow as heavy in first use,
-  or a multi-step flow that will not fit a modal
+refactoring state management.
+
+Falsified by: users reporting the modal flow as heavy in first use, or a
+multi-step flow that will not fit a modal.
+
 Status: open
 ```
 

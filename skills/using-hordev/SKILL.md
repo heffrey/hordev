@@ -229,6 +229,7 @@ A run leaves these behind, in the project root:
 | `.hordev/specs/<feature-name>.md` | `rapid-spec` | The spec |
 | `.hordev/tdds/<feature-name>.md` | `writing-tdds` | Test-driven design |
 | `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
+| `.hordev/dispatch/<task>.md` | `dispatching-hordes` | Every agent prompt, exactly as sent |
 | `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
 | `.hordev/proposed-amendments.md` | `improving-hordev` | Amendments the Reflect stage proposes; the orchestrator applies or declines |
 
