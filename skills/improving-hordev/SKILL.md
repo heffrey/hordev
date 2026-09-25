@@ -118,7 +118,10 @@ tally-classes.sh a.md b.md       # just these
 
 It prints each class with its entry count, how many distinct logs it appears
 in, and the bar it clears. A path in the index that no longer exists (a removed
-worktree) is reported, not silently skipped.
+worktree) is reported, not silently skipped. An entry is identified by its
+EVENT text and counted once, in the first log that has it: worktrees carry
+copies of the same log, and a copy is not a repeat. Two real failures therefore
+need two EVENTs worded differently, which they always are.
 
 - **One-off**: Log it. Move on. Capture the cost, but do not amend.
 - **Systemic** (seen 2 times): Amend the skill. Add one rule.
@@ -134,7 +137,7 @@ hordev is good enough. The measure is amendment yield going to zero: real runs
 no longer repeat failures.
 
 **Converged** means all of these, over the 10 most recent run logs in the index
-that still exist:
+that still exist and each add an entry no earlier one has (a copy is not a run):
 
 - they come from at least 3 projects, so one easy codebase cannot declare victory
 - every entry is well formed and classified, so absence of a repeat is real

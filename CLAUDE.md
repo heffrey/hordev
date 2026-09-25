@@ -65,7 +65,7 @@ tool.
 
 ## Status
 
-Version 0.8.0. The plugin manifest, both hooks, and the skill library exist. There is no
+Version 0.8.1. The plugin manifest, both hooks, and the skill library exist. There is no
 build step. `tests/run.sh` runs a dependency-free bash suite that exercises both hooks and
 every script beside a skill against fixture projects; run it before committing a change to
 any of them. Skill prose itself is still validated by reading it.

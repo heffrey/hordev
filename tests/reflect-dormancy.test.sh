@@ -7,8 +7,10 @@ HOOK="${HOOK:-$REPO/hooks/reflect.sh}"
 OLD=202001010000
 OLDER=201901010000
 
-entry() {  # entry <class>
-  printf 'EVENT: fixture\nSKILL: horde-qa\nCOST: one-off\nCLASS: %s\nRULE:\n---\n' "$1"
+N=0
+entry() {  # entry <class>; every call writes a distinct entry
+  N=$((N + 1))
+  printf 'EVENT: fixture %s\nSKILL: horde-qa\nCOST: one-off\nCLASS: %s\nRULE:\n---\n' "$N" "$1"
 }
 
 # build <scratch> <n-projects> <n-logs> [unclassified]
@@ -93,6 +95,18 @@ for case in "2 10" "3 9" "3 10 unclassified"; do
   [ ! -e "$T/home/dormant" ] && pass "not converged ($case): no marker" || fail "not converged ($case): no marker"
   rm -rf "$T"
 done
+
+# Copies are not runs: nine distinct logs plus a worktree copy of one of them
+# is nine runs, short of convergence.
+T=$(scratch)
+build "$T" 3 9
+mkdir -p "$T/proj1/.claude/worktrees/copy/.hordev"
+cp "$T/proj1/.claude/worktrees/run1/.hordev/run-log.md" "$T/proj1/.claude/worktrees/copy/.hordev/run-log.md"
+printf '%s\n' "$T/proj1/.claude/worktrees/copy/.hordev/run-log.md" >> "$T/home/runs.md"
+out=$(hook "$T")
+assert_not_contains "a copy does not count toward convergence" "$out" 'converged'
+[ ! -e "$T/home/dormant" ] && pass "and no dormant marker" || fail "and no dormant marker"
+rm -rf "$T"
 
 # HORDEV_REFLECT=off never blocks, and still indexes.
 T=$(scratch)

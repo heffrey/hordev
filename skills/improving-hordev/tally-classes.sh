@@ -27,7 +27,7 @@ else
   logs=$(grep -vE '^[[:space:]]*(#|$)' "$INDEX")$'\n'
 fi
 
-pairs=""      # "<class>\t<log number>" per entry
+pairs=""      # "<class>\t<log number>\t<event>" per classed entry
 notes=""
 n=0
 while IFS= read -r log; do
@@ -47,11 +47,16 @@ while IFS= read -r log; do
   if [ "$events" -eq 0 ]; then
     notes="${notes}unparseable    $log (no EVENT: lines; run validate-run-log.sh)"$'\n'
   fi
-  [ -n "$classes" ] && pairs="$pairs$(printf '%s\n' "$classes" | awk -v n="$n" '{ print $0 "\t" n }')"$'\n'
+  pairs="$pairs$(bash "$HERE/entry-keys.sh" "$log" |
+    awk -F'\t' -v n="$n" '$1 != "" { print $1 "\t" n "\t" $2 }')"$'\n'
 done <<< "$logs"
 
+# An entry is counted once, in the first log that has it. Worktrees carry
+# copies of the same log, and counting each copy turned one failure into a
+# recurrence.
 printf '%-18s %7s %5s  %s\n' CLASS ENTRIES LOGS BAR
 printf '%s' "$pairs" | grep . | awk -F'\t' '
+  seen_event[$3]++ { next }
   { e[$1]++; if (!seen[$1 FS $2]++) l[$1]++ }
   END { for (c in e) printf "%s\t%d\t%d\n", c, e[c], l[c] }' \
   | sort -t "$(printf '\t')" -k2,2nr -k1,1 \

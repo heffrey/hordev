@@ -6,6 +6,25 @@ log. A failure seen twice earns a rule; seen three times, a rewrite.
 Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
 
+## 0.8.1 — 2026-09-24
+
+The reflect hook decided a log had grown from its modification time, so it asked
+for reflection twice in one session on entries already reflected on: once for
+worktree copies of a log, once after a fast-forward rewrote the main checkout's
+copy. The same copies inflated the cross-run tally, counting one failure once
+per worktree.
+
+- `reflect.sh` asks only about entries it has not asked about before, keyed on
+  each entry's EVENT text and remembered in `~/.claude/hordev/reflected`.
+  Checkouts, merges, worktree copies and back-filled CLASS fields stay silent. A
+  log with no parseable entry is keyed on its whole content. Without a writable
+  home it falls back to the old stamps, and on upgrade it seeds the list from
+  logs those stamps already mark as reflected.
+- `tally-classes.sh` counts each entry once, in the first log that has it, and
+  convergence counts only logs that add an entry, so a copy is not a run.
+- New `entry-keys.sh` is the one parser of an entry's identity; both scripts use
+  it.
+
 ## 0.8.0 — 2026-09-24
 
 Amendments from the run logs written since 0.7.0, across three projects and
