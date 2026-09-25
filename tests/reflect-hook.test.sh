@@ -71,7 +71,7 @@ assert_contains "project dir inside a worktree still scans the whole project" "$
 
 # One owner for reflection: the hook quotes using-hordev's Reflect stage word
 # for word. If either side is edited alone, this fails.
-SENTENCE='Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes.'
+SENTENCE='Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It appends to ~/.claude/hordev/proposed-amendments.md under a heading naming the project, and edits no skill; you apply or decline what it proposes.'
 stage=$(tr '\n' ' ' < "$REPO/skills/using-hordev/SKILL.md" | tr -s ' ')
 assert_contains "using-hordev states the Reflect procedure" "$stage" "$SENTENCE"
 entry >> "$Q/.hordev/run-log.md"   # $Q was reflected above; grow it again

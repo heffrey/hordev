@@ -135,8 +135,9 @@ and cannot hand off to the next stage. So:
    yourself when it returns.
 5. **Verify.** You run `horde-qa` yourself.
 6. **Reflect.** Dispatch one sonnet agent with the improving-hordev skill text
-   and the run log paths. It writes .hordev/proposed-amendments.md beside the
-   run log and edits no skill; you apply or decline what it proposes.
+   and the run log paths. It appends to ~/.claude/hordev/proposed-amendments.md under
+   a heading naming the project, and edits no skill; you apply or decline what
+   it proposes.
 
    This is the only description of how reflection runs. The `Stop` hook
    (`hooks/reflect.sh`) is a trigger: when a run log has grown it quotes the
@@ -238,7 +239,10 @@ A run leaves these behind, in the project root:
 | `.hordev/assumptions.md` | `rapid-spec`, `writing-tdds` | Every question not asked |
 | `.hordev/dispatch/<task>.md` | `dispatching-hordes` | Every agent prompt, exactly as sent |
 | `.hordev/run-log.md` | all stages | What went wrong, for `improving-hordev` |
-| `.hordev/proposed-amendments.md` | `improving-hordev` | Amendments the Reflect stage proposes; the orchestrator applies or declines |
+
+One file lives outside the project: `~/.claude/hordev/proposed-amendments.md`, the
+amendments Reflect proposes, collected from every project in one place because
+they are applied in the hordev clone, not in the project that found them.
 
 ## Where hordev differs from superpowers
 

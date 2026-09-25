@@ -6,6 +6,22 @@ log. A failure seen twice earns a rule; seen three times, a rewrite.
 Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
 
+## 0.8.2 — 2026-09-25
+
+Reflect wrote proposed amendments to each project's
+`.hordev/proposed-amendments.md`. hordev is amended from its clone, so they
+piled up where nobody applied them: 13 files, mostly worktree copies, held 8
+proposals, 3 already applied and 5 never read.
+
+- Proposals go to one file, `~/.claude/hordev/proposed-amendments.md`
+  (`$HORDEV_HOME` when set), beside `runs.md`, under a heading naming the
+  project. A rule already proposed from another project gets this project's
+  entries added to its section instead of a new one.
+- The rule is stated in `improving-hordev`'s guardrails and in `CLAUDE.md`.
+  `using-hordev`'s Reflect stage and `hooks/reflect.sh` quote the new wording.
+- New `tests/amendments-location.test.sh` fails if any skill, hook or script
+  points proposals at a project's `.hordev/`.
+
 ## 0.8.1 — 2026-09-24
 
 The reflect hook decided a log had grown from its modification time, so it asked
