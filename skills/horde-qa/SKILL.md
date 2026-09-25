@@ -132,6 +132,18 @@ Cheapest invalidation first: the suite (checklist 0-2), then the real path
      suite whose result is the same whether the feature works or does nothing
      does not cover the feature — an analytics allowlist suite passed whether
      or not a single event was ever sent.
+   - **Every external call, live, once succeeding and once failing.** Hit the
+     real service and force one failure (timeout, 4xx, rate limit). What the
+     user sees for the failure must differ from an empty result. Twice a
+     provider returned `[]` on failure: once an API began rejecting requests
+     without a User-Agent and lookups failed silently, and once timeouts and
+     429s were saved permanently as "nothing here" for seven of ten places.
+   - **A device build is verified running, not installed.** Build the signed
+     configuration the user will run, verify the signature, launch it, and
+     confirm the process is still alive afterwards. An install that crashed
+     on launch reached a user's phone reported as fine, because the launch
+     check was blocked and "installed" stood in for it. The simulator does not
+     enforce signing, so it cannot stand in either.
    - STOP if core path breaks. Fix and verify.
    - "There is no runnable path" is not an answer until you have priced a
      synthetic client (a scripted HTTP caller, a software authenticator, a fake
@@ -172,6 +184,9 @@ Cheapest invalidation first: the suite (checklist 0-2), then the real path
 | Build is clean | "Build succeeds" | Look at it running (step 3); a build passes with the styling pipeline inert |
 | Found a problem | "Encoding issues" | Reproduce it before acting on it; a confident false alarm sends QA the wrong way |
 | Obeyed prohibitions | "No git commands run" | Check `git reflog` and the index; an agent that ran git and unwound it can still say this |
+| Followed the brief | Restates a rule in its own words ("resting windows bridge between handled ones") | Compare the restatement to the prompt. A different wording is a different rule; open the code before accepting it |
+| Handles failure | "Returns [] on error" | An empty result and a failed call must be distinguishable; force the failure and look |
+| Deployed | "Installed on device" | Launch it and check the process is alive; installed is not running |
 
 ## What to Do on Failure
 

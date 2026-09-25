@@ -6,6 +6,46 @@ log. A failure seen twice earns a rule; seen three times, a rewrite.
 Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
 
+## 0.8.0 — 2026-09-24
+
+Amendments from the run logs written since 0.7.0, across three projects and
+about ten runs. Each rule below was seen at least twice.
+
+- `dispatching-hordes`: the TDD's examples go into the prompt verbatim as
+  required assertions. Agent-written tests had defended the agent's own bug four
+  times. UI tasks render their own screen and attach a screenshot, with the
+  platform's layout traps named in the prohibitions. After the commit, agents'
+  reported files are checked against `git show --stat HEAD`.
+- `reconciling-horde-output`: "build" means the build that ships (production
+  build, bundler, release configuration), not typecheck and tests. A new step
+  checks every TDD example is asserted as written. Gates read exit codes, not
+  grepped output.
+- `isolating-horde-workspaces`: dispatched agents never call `EnterWorktree`.
+  A session has one isolation pin, and three race agents moved it out from under
+  each other.
+- `horde-qa`: every external call is observed live, once succeeding and once
+  failing, and a failure must not look like an empty result. A device build is
+  verified running, not installed. Three rows added to the lies table.
+- `writing-tdds`: inputs shaped like the real source, with the input model
+  stated first; a failure test for every external call; calendar days through
+  one local-date helper. Units that need only contracts are dispatched on a
+  contracts file and never wait for the TDD.
+- `rapid-spec`: platform gates (entitlements, signing, keys, toolchain) are
+  probed while the spec is written, and slow native builds start before
+  dispatch.
+
+Run logs that cannot be counted:
+
+- Every log written since 0.7.0 fails `validate-run-log.sh`. Entries lack
+  CLASS or separators, and one log invented its own WHAT/CAUSE/FIX format.
+  Cross-run tallying reads CLASS, so none of those failures could count toward
+  a repeat. The skills that write the log point at `improving-hordev` for its
+  format, and agents rarely load it.
+- `reflect.sh` now runs the validator on each grown log and asks for malformed
+  entries to be rewritten while the session that wrote them still has context.
+- `validate-run-log.sh` flags invented fields before the first separator. A log
+  written entirely in another format used to pass as "ok, 0 entries".
+
 ## 0.7.0 — 2026-09-13
 
 Fifteen changes from two runs' evidence, read together, plus reflection that

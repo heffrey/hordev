@@ -78,6 +78,20 @@ assert_contains "hook reason quotes that procedure exactly" "$out" "$SENTENCE"
 count=$(grep -rlF 'Dispatch one sonnet agent with the improving-hordev skill text' "$REPO/skills" | wc -l | tr -d ' ')
 assert_status "procedure appears in exactly one skill" "$count" 1
 
+# A grown log that fails the validator is named for rewriting; a clean one is not.
+M=$(scratch)
+mkdir -p "$M/.hordev" "$M/.claude/worktrees/ok/.hordev"
+printf '# Run log\n\n- WHAT: prose, not an entry\n' > "$M/.hordev/run-log.md"
+entry > "$M/.claude/worktrees/ok/.hordev/run-log.md"
+out=$(run_hook "$M")
+assert_contains "malformed log is flagged for rewriting" "$out" 'Malformed run log (.hordev/run-log.md)'
+assert_not_contains "well-formed log is not flagged" "$out" 'Malformed run log (.claude/worktrees/ok'
+assert_contains "procedure is still quoted alongside the flag" "$out" "$SENTENCE"
+assert_json "flagged payload is valid JSON" "$out"
+touch -t "$OLD" "$Q/.hordev/.reflected"
+out=$(run_hook "$Q")
+assert_not_contains "well-formed logs get no rewrite request" "$out" 'Malformed'
+
 # Nothing to reflect on.
 E=$(scratch)
 out=$(run_hook "$E"); status=$?
@@ -95,5 +109,5 @@ assert_empty "index has no duplicate paths after repeated Stops" "$dupes"
 out=$(printf '{}' | CLAUDE_PROJECT_DIR="$Q" HORDEV_HOME="/dev/null/nope" bash "$HOOK"); status=$?
 assert_status "unwritable index home still exits 0" "$status" 0
 
-rm -rf "$P" "$Q" "$R" "$E" "$INDEX_HOME"
+rm -rf "$P" "$Q" "$R" "$E" "$M" "$INDEX_HOME"
 finish

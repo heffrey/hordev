@@ -33,6 +33,19 @@ the rest (e.g., if build fails, fix and retest before moving on).
    run only that agent's tests in isolation. If their specific tests pass, the
    break is at a seam — note it.
 
+   "Build" means the build that ships: the framework's production build, the
+   app bundler, the release configuration. Typecheck plus tests is not it.
+   Lint rules, module resolution and signing run only there, and each has
+   passed tsc and the suite while the real build failed: a React Compiler lint
+   error inside `opennextjs-cloudflare build`, Node-style `.js` import
+   extensions that Metro could not resolve, a debug dylib left unsigned on a
+   device build. Restart any bundler with its cache cleared after the horde
+   adds files. The same gate applies to a scaffold the orchestrator writes
+   before a race: build it before copying it into candidates.
+
+   Gate on exit codes, never on grepping output. ANSI colour split
+   `error TS` and let a syntax error pass as clean.
+
 2. **Check seams first** — Inspect the interfaces between agents' files before
    reading bodies. Look for:
    - Function signatures: do they match what the neighbor agent expects?
@@ -53,6 +66,11 @@ the rest (e.g., if build fails, fix and retest before moving on).
 5. **Validate naming against TDD** — Run `grep` for test expectations. If
    a test expects `process_data()` but the implementation has `handle_data()`,
    that's a mismatch to fix.
+
+6. **Every TDD example is asserted as written** — For each example in the
+   TDD, find the test that asserts it verbatim. A missing one is a gap; an
+   agent test that asserts something else is the agent defending its own bug,
+   and the code is wrong, not the TDD. See `dispatching-hordes`, item 4.
 
 ## Fix or re-dispatch: decision rule
 

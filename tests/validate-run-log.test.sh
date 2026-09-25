@@ -23,6 +23,17 @@ assert_status "one problem per prose section, not per line" "$count" 2
 assert_not_contains "the one well-formed entry is not flagged" "$out" "prose-run.md:23"
 
 T=$(scratch)
+
+# A log in an invented format never reaches a separator, so it is all preamble.
+printf '# Run log\n\n- WHAT: a failure\n  COST: an hour\n  FIX: a rule\n' > "$T/invented.md"
+out=$(bash "$V" "$T/invented.md"); status=$?
+assert_status "an invented-format log with no separator fails" "$status" 1
+assert_contains "its first invented field is named" "$out" "invented.md:3: field outside the entry format"
+assert_not_contains "and it is not reported as ok" "$out" "ok, 0 entries"
+printf '# hordev run log\n\nAppend-only. Format defined by `improving-hordev`.\n' > "$T/title-only.md"
+out=$(bash "$V" "$T/title-only.md"); status=$?
+assert_status "a title and plain text alone still pass" "$status" 0
+
 check() {  # check <name> <log body> <expected substring>
   printf '# log\n\n---\n\n%s' "$2" > "$T/$1.md"
   local o

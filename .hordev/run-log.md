@@ -101,3 +101,14 @@ COST: one-off
 CLASS: other
 RULE:
 ---
+
+EVENT: Every project run log written since 0.7.0 failed validate-run-log.sh:
+entries without CLASS or separators, and one log in an invented
+WHAT/CAUSE/FIX format that the validator passed as 0 entries. None could be
+tallied across runs. Found while reading them by hand for 0.8.0.
+SKILL: improving-hordev
+COST: systemic (3 times)
+CLASS: format-drift
+RULE: reflect.sh validates each grown log and asks for a rewrite before
+Reflect; the validator flags invented fields before the first separator.
+---

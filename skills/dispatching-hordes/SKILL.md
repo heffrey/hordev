@@ -30,7 +30,8 @@ Every item below is load-bearing.
 3. **Output.** Which files it creates or modifies. Name them exactly. This is
    its write surface and nothing else is.
 4. **What passing looks like.** Paste real test names, expected values, edge
-   cases. Never "make the tests pass".
+   cases. Never "make the tests pass". Paste the TDD's example inputs and
+   outputs literally, as assertions the agent's tests must contain. See below.
 5. **The verification command, verbatim, with raw output required.** See below —
    this is the item most often left implicit and it is the one that fails
    silently.
@@ -38,8 +39,9 @@ Every item below is load-bearing.
 7. **Style bar.** Match the surrounding code: indentation, naming, comment
    density.
 8. **Write, do not plan.** "Implement the code directly. Do not write a plan."
-9. **Worktree path.** From `isolating-horde-workspaces`. Without it the agent
-   edits the user's checkout.
+9. **Worktree path, absolute.** From `isolating-horde-workspaces`. Without it
+   the agent edits the user's checkout. The agent works at that path and never
+   calls `EnterWorktree`; that skill says why.
 10. **Open assumptions.** The IDs and `Decided` lines from
     `.hordev/assumptions.md` bearing on this component. An agent that does not
     know what was assumed will contradict it. Only cite IDs that exist; see
@@ -86,6 +88,30 @@ reading is the part that goes wrong.
 `horde-qa` then re-runs *that* command, not whichever one came back in the
 report.
 
+### 4, expanded: the TDD's examples are the agent's assertions
+
+An agent that writes its own tests will write them against its own
+implementation, and a bug then arrives with a test defending it. It has happened
+four times in one project: history inserted oldest-first under a TDD that said
+newest-first, a wrong caption, an eight-hour "phone use" span bridged across a
+rest, and a lookup that returned `[]` on a timeout, each with an agent-written
+test asserting exactly that. Every suite was green.
+
+Copy each TDD example into the prompt as a required assertion, word for word.
+A test the agent writes that contradicts one is a defect in the agent's work,
+never a change to the TDD. `reconciling-horde-output` checks for it.
+
+### UI tasks look at their own screen
+
+Typecheck and unit tests cannot see layout. Agent-built screens have shipped
+twice with zero-height content, clipped animation, or text wrapping one letter
+per line, all green. When a task renders UI and the run has a simulator or
+browser to spare, the prompt requires the agent to render its screen there and
+attach a screenshot before reporting done. Name the layout traps for the
+platform in the prohibitions; for React Native: no `flex: 1` under a parent
+without a bounded height, no unsized centering or `absoluteFill` wrapper, no
+`width: "100%"` under `alignItems: "center"`.
+
 ### 11, expanded: prohibitions bracket the prompt
 
 An agent that starts acting before it finishes reading will break a rule it has
@@ -129,8 +155,8 @@ ACCEPTANCE:
 STYLE: existing naming (camelCase, no prefixes), JSDoc on public methods,
 match the indentation of the Widget class.
 
-WORKTREE: .claude/worktrees/horde-1730000000
-Work only inside this directory.
+WORKTREE: /abs/path/to/repo/.claude/worktrees/horde-1730000000
+Work only inside this directory. Do not call EnterWorktree.
 
 OPEN ASSUMPTIONS (do not contradict):
 - PAY-002: Transaction amounts are integer cents, never floats.
@@ -138,8 +164,8 @@ OPEN ASSUMPTIONS (do not contradict):
 
 Implement directly. Do not write a plan. Write the code.
 
-DO NOT: run any git command. Commit. Touch files outside OUTPUT above.
-Substitute your own verification command.
+DO NOT: run any git command. Commit. Call EnterWorktree. Touch files outside
+OUTPUT above. Substitute your own verification command.
 ```
 
 ## Say Who Commits
@@ -155,6 +181,12 @@ does not cover.
 The orchestrator commits once, after `reconciling-horde-output`, when the tree
 is coherent. If an agent genuinely needs its own history, it needs its own
 worktree — see `isolating-horde-workspaces`.
+
+After committing, compare every file the agents reported writing against
+`git show --stat HEAD`. A reported file missing from the commit is an ignore
+rule matching it: an unanchored `ios/` in `.gitignore` silently dropped a native
+module's sources while tests, typecheck and the simulator build all passed,
+because they read the working tree and not the commit.
 
 ## Always Set Model Explicitly
 
