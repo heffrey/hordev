@@ -194,3 +194,8 @@ restating them.
   situation against them.
 - Keep skills narrow. One skill, one decision point.
 - Skills are prose instructions for a model, not code — they are read, not executed.
+- **Proposed amendments live at the user level, always.** Reflect writes them to
+  `~/.claude/hordev/proposed-amendments.md` and never into the project it ran in. They are applied here,
+  in this clone, so one list across every project is the only place they get read. No skill, hook
+  or script may point them at a project's `.hordev/`; `tests/amendments-location.test.sh` fails if
+  one does.

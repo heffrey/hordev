@@ -218,7 +218,7 @@ fi
 
 # The procedure is owned by using-hordev's Reflect stage. This text quotes it
 # word for word, and tests/reflect-hook.test.sh fails if the two drift.
-reason="$lead If a run is still in progress, finish it first. Then run the Reflect stage from using-hordev: Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes."
+reason="$lead If a run is still in progress, finish it first. Then run the Reflect stage from using-hordev: Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It appends to ~/.claude/hordev/proposed-amendments.md under a heading naming the project, and edits no skill; you apply or decline what it proposes."
 if [ -n "$malformed" ]; then
   reason="$reason Malformed run log ($malformed): run skills/improving-hordev/validate-run-log.sh on it and rewrite the entries it names in the format improving-hordev defines, keeping what they say, before Reflect reads it. A class Reflect cannot parse is never counted."
 fi

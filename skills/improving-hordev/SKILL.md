@@ -223,15 +223,22 @@ reviewable in git history. Two things catch people here:
 **Installed from the marketplace** (skills live under the plugin cache): do
 NOT edit them. That directory is not version controlled and is overwritten on
 the next plugin update, so the edit looks applied and then vanishes. Instead
-append the proposed amendment to `.hordev/proposed-amendments.md` in the
-project, in this form:
+append the proposed amendment to `~/.claude/hordev/proposed-amendments.md`, in
+the hordev home beside `runs.md` (`$HORDEV_HOME` when set; create the directory
+if it is missing), in this form:
 
 ```
-## <skill-name> — <symptom>
+## <skill-name> — <symptom> (<project path>, <date>)
 
 Observed: <what happened, and the run-log entries that show the repeat>
 Rule to add: <the exact text to insert, and where>
 ```
+
+The file is global, not per project: amendments are applied in the hordev
+clone, so every project's proposals land in the one list read from there. Before
+appending, read it; if the same rule is already proposed from another project,
+add this project's run-log entries to that section's Observed line instead of a
+new section, since a repeat across projects is exactly what the bar counts.
 
 Then tell the user the file exists and that applying it means running hordev
 from a clone or opening a pull request upstream. Self-improvement that
@@ -256,6 +263,11 @@ NEW:
   proposes (see Two jobs, two owners). This is the boundary that keeps hordev
   from rewriting itself while nobody is reading.
 - **Version control only.** All edits in git. No hidden tweaks.
+- **Proposals live at the user level, never in a project.** Always
+  `~/.claude/hordev/proposed-amendments.md`, whatever project the run was in and however
+  hordev is installed. hordev is amended from its clone, so a proposal written
+  into a project's `.hordev/` is scattered, copied into every worktree, and never
+  applied. `tests/amendments-location.test.sh` enforces this.
 - **Do not overfit.** Wait for repetition (2+ times) before amending.
 - **Skill bloat detection.** If a skill grows > 20 rules, it is overfit. Rewrite instead.
 
