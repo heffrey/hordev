@@ -78,17 +78,49 @@ PROJECTS="${HORDEV_CONVERGE_PROJECTS:-3}"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 TALLY="$PLUGIN_ROOT/skills/improving-hordev/tally-classes.sh"
 VALIDATE="$PLUGIN_ROOT/skills/improving-hordev/validate-run-log.sh"
+KEYS="$PLUGIN_ROOT/skills/improving-hordev/entry-keys.sh"
 MARKER="${INDEX_DIR:+$INDEX_DIR/dormant}"
+# Every entry reflection has already been asked about, one key per line, across
+# all projects. See log_keys.
+SEEN="${INDEX_DIR:+$INDEX_DIR/reflected}"
 
 [ "$MODE" = off ] && exit 0
 
-# Tally the most recent $RUNS indexed logs that still exist. Prints the tally, or
-# nothing if there is no index or no tally script to run.
+# One key per entry in a log: its EVENT text, from entry-keys.sh. A log with no
+# parseable entry gets one key for its whole content, so a malformed log is still
+# noticed when it changes.
+#
+# Entries, not file times, decide whether a log grew. A modification time moves
+# when git checks the file out, when a worktree is created from a branch that
+# carries it, and when a merge rewrites it, and each of those asked for
+# reflection on entries already reflected on.
+log_keys() {
+  local k=""
+  [ -r "$KEYS" ] && k=$(bash "$KEYS" "$1" 2>/dev/null | cut -f2)
+  if [ -n "$k" ]; then printf '%s\n' "$k"; else printf 'FILE %s\n' "$(cksum < "$1")"; fi
+}
+
+# Reads log paths, prints those that add at least one entry no earlier path had.
+# Worktrees carry copies of the same log; a copy is not another run.
+distinct_runs() {
+  local p keys new seen=""
+  while IFS= read -r p; do
+    keys=$(log_keys "$p")
+    new=$(printf '%s\n' "$keys" | grep -vxF -f <(printf '%s\n' "$seen"))
+    [ -n "$new" ] || continue
+    seen="$seen${seen:+$'\n'}$new"
+    printf '%s\n' "$p"
+  done
+}
+
+# Tally the most recent $RUNS distinct indexed logs that still exist. Prints the
+# tally, or nothing if there is no index or no tally script to run.
 recent_tally() {
   [ -n "$INDEX_DIR" ] && [ -r "$INDEX_DIR/runs.md" ] && [ -r "$TALLY" ] || return 0
   local window
   window=$(grep -vE '^[[:space:]]*(#|$)' "$INDEX_DIR/runs.md" |
-    while IFS= read -r p; do [ -r "$p" ] && printf '%s\n' "$p"; done | tail -n "$RUNS")
+    while IFS= read -r p; do [ -r "$p" ] && printf '%s\n' "$p"; done |
+    distinct_runs | tail -n "$RUNS")
   [ -n "$window" ] || return 0
   set --
   while IFS= read -r p; do set -- "$@" "$p"; done <<< "$window"
@@ -131,14 +163,37 @@ case "$state" in
     ;;
 esac
 
+# The seen list is new in 0.8.1. On first use, seed it from logs whose old
+# .reflected stamp says they were already reflected, so upgrading does not ask
+# about every entry ever written.
+by_entry=""
+if [ -n "$SEEN" ]; then
+  if [ ! -e "$SEEN" ] && : >> "$SEEN" 2>/dev/null; then
+    while IFS= read -r log; do
+      [ -n "$log" ] || continue
+      stamp="$(dirname "$log")/.reflected"
+      if [ -e "$stamp" ] && [ ! "$log" -nt "$stamp" ]; then
+        log_keys "$log" >> "$SEEN"
+      fi
+    done <<< "$logs"
+  fi
+  [ -w "$SEEN" ] && by_entry=1
+fi
+
 grown=""
 malformed=""
 while IFS= read -r log; do
   [ -n "$log" ] || continue
-  # Speak only when this log grew since its last reflection, so a session that
-  # ends twenty times does not get asked twenty times.
+  # Speak only when this log holds an entry not yet asked about, so a session
+  # that ends twenty times is not asked twenty times, and a copy of a log is not
+  # asked about at all. Without a writable seen list, fall back to the log's
+  # modification time against a stamp beside it.
   stamp="$(dirname "$log")/.reflected"
-  if [ -e "$stamp" ] && [ ! "$log" -nt "$stamp" ]; then
+  if [ -n "$by_entry" ]; then
+    new=$(log_keys "$log" | grep -vxF -f "$SEEN")
+    [ -n "$new" ] || continue
+    printf '%s\n' "$new" >> "$SEEN"
+  elif [ -e "$stamp" ] && [ ! "$log" -nt "$stamp" ]; then
     continue
   fi
   touch "$stamp" 2>/dev/null || true

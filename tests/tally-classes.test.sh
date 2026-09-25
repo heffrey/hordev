@@ -39,6 +39,18 @@ out=$(bash "$TALLY" "$H/legacy.md")
 assert_contains "entries without CLASS are counted as unclassified" "$out" "1 of 2 entries have no CLASS"
 assert_contains "a class outside the vocabulary is flagged" "$(row "$out" vibes)" "unknown class"
 
+# Worktree copies of one log are one run. Counting each copy once turned a
+# single failure into a recurrence.
+mkdir -p "$H/a" "$H/b"
+printf 'EVENT: one failure\nSKILL: horde-qa\nCOST: one-off\nCLASS: resource\nRULE:\n---\n' > "$H/a/run-log.md"
+cp "$H/a/run-log.md" "$H/b/run-log.md"
+out=$(bash "$TALLY" "$H/a/run-log.md" "$H/b/run-log.md")
+assert_contains "an entry in two copies counts once" "$(row "$out" resource)" "one-off"
+assert_not_contains "and not across runs" "$(row "$out" resource)" "across"
+printf 'EVENT: another failure\nSKILL: horde-qa\nCOST: one-off\nCLASS: resource\nRULE:\n---\n' >> "$H/b/run-log.md"
+out=$(bash "$TALLY" "$H/a/run-log.md" "$H/b/run-log.md")
+assert_contains "a new entry in a copy still counts" "$(row "$out" resource)" "systemic: add a rule"
+
 out=$(HORDEV_HOME="$H/none" bash "$TALLY" 2>&1); status=$?
 assert_status "no index and no arguments is an error" "$status" 2
 

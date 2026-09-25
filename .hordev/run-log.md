@@ -113,3 +113,14 @@ CLASS: format-drift
 RULE: reflect.sh validates each grown log and asks for a rewrite before
 Reflect; the validator flags invented fields before the first separator.
 ---
+
+EVENT: The reflect hook asked for reflection twice in one session on entries
+already reflected on: once for worktree copies of a log, once after a
+fast-forward rewrote the main checkout's copy. It read a newer file as a grown
+log, and the same copies were indexed as separate runs by the tally.
+SKILL: improving-hordev
+COST: systemic (2 times)
+CLASS: other
+RULE: Growth is an entry not asked about before, keyed on EVENT text; a copy of
+a log is not a run.
+---

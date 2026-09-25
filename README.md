@@ -141,11 +141,14 @@ Early. Version 0.8.0.
 The skills are written, and both hooks run inside live Claude Code sessions:
 `session-start.sh` injects the entrypoint skill at startup, and `reflect.sh`
 blocks once on Stop when a run log has grown — in the main checkout or in any
-`.claude/worktrees/*/` — then stays silent behind its `stop_hook_active` guard
-and a `.reflected` stamp beside each log. Before 0.7.0 it looked only in the
-main checkout, so it never fired for a run isolated in a worktree. Since 0.8.0
-it also asks for any grown log that fails `validate-run-log.sh` to be rewritten
-in format, because a log that cannot be parsed cannot be counted across runs.
+`.claude/worktrees/*/` — then stays silent behind its `stop_hook_active` guard.
+Growth means an entry it has not asked about before, remembered in
+`~/.claude/hordev/reflected`; before 0.8.1 it meant a newer file, so checkouts,
+merges and worktree copies asked again about entries already reflected on.
+Before 0.7.0 it looked only in the main checkout, so it never fired for a run
+isolated in a worktree. Since 0.8.0 it also asks for any grown log that fails
+`validate-run-log.sh` to be rewritten in format, because a log that cannot be
+parsed cannot be counted across runs.
 `tests/run.sh` exercises both hooks against fixture projects.
 
 The self-improvement loop has closed at least once on its own output — the
