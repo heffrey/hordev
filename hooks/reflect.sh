@@ -77,6 +77,7 @@ RUNS="${HORDEV_CONVERGE_RUNS:-10}"
 PROJECTS="${HORDEV_CONVERGE_PROJECTS:-3}"
 PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 TALLY="$PLUGIN_ROOT/skills/improving-hordev/tally-classes.sh"
+VALIDATE="$PLUGIN_ROOT/skills/improving-hordev/validate-run-log.sh"
 MARKER="${INDEX_DIR:+$INDEX_DIR/dormant}"
 
 [ "$MODE" = off ] && exit 0
@@ -131,6 +132,7 @@ case "$state" in
 esac
 
 grown=""
+malformed=""
 while IFS= read -r log; do
   [ -n "$log" ] || continue
   # Speak only when this log grew since its last reflection, so a session that
@@ -141,6 +143,14 @@ while IFS= read -r log; do
   fi
   touch "$stamp" 2>/dev/null || true
   grown="${grown:+$grown, }${log#"$ROOT"/}"
+  # Skills that write the log point at improving-hordev for its format, and the
+  # agents writing it rarely load that skill. Logs written from memory came back
+  # without CLASS, without separators, or as prose, and a log tally-classes.sh
+  # cannot parse is invisible to cross-run counting. Catch it while the session
+  # that wrote the entries still has the context to rewrite them.
+  if [ -r "$VALIDATE" ] && ! bash "$VALIDATE" "$log" >/dev/null 2>&1; then
+    malformed="${malformed:+$malformed, }${log#"$ROOT"/}"
+  fi
 done <<< "$logs"
 
 if [ "$state" = woke ]; then
@@ -154,5 +164,8 @@ fi
 # The procedure is owned by using-hordev's Reflect stage. This text quotes it
 # word for word, and tests/reflect-hook.test.sh fails if the two drift.
 reason="$lead If a run is still in progress, finish it first. Then run the Reflect stage from using-hordev: Dispatch one sonnet agent with the improving-hordev skill text and the run log paths. It writes .hordev/proposed-amendments.md beside the run log and edits no skill; you apply or decline what it proposes."
+if [ -n "$malformed" ]; then
+  reason="$reason Malformed run log ($malformed): run skills/improving-hordev/validate-run-log.sh on it and rewrite the entries it names in the format improving-hordev defines, keeping what they say, before Reflect reads it. A class Reflect cannot parse is never counted."
+fi
 
 printf '{"decision":"block","reason":"%s"}\n' "$(json_escape "$reason")"

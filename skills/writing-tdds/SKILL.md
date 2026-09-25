@@ -86,6 +86,34 @@ consumed by the real handler. Unit tests on each side do not count. A double
 decode on one side and an encoded-form comparison on the other both pass their
 own unit tests.
 
+**Shape inputs like the real source.** For stateful or time-based behavior,
+state the input model in one paragraph before the first unit: what a sample,
+span or window means, and what it looks like when nothing happens. Then build
+inputs the way the real source produces them. Stay detection passed on
+synthetic 60-second samples and could never fire on a device, because
+location updates filtered by distance send nothing while the user stands
+still. A "does not change X" unit puts its input through the path that is
+supposed to filter it; two units have inserted the very thing they then
+asserted was absent.
+
+**A failure is not an empty result.** Every unit that calls something external
+has a test where the call fails, and the failure is observable as a failure:
+an error, a status, a retry. A TDD that allows `[]` for both a failed lookup and
+an empty one lets the implementation store a timeout as "nothing here".
+
+**Calendar days are local.** Date logic uses one local-date helper named in the
+TDD, never `new Date("YYYY-MM-DD")` or `toISOString().slice(0, 10)`, which are
+UTC. Tests that depend on the day pin the clock and the time zone. An evening
+run in US Central has flipped a hard-coded date test.
+
+## Contracts Do Not Wait for the TDD
+
+Only units whose behavior is genuinely ambiguous need a TDD. Units that need
+only signatures, props, keys and file ownership go out on a contracts file the
+orchestrator writes itself in minutes, and dispatch immediately. A stream once
+sat behind a single TDD agent for 35 minutes while seven of its units needed
+nothing but signatures. The TDD never gates a unit it does not test.
+
 ## Parallel-Safe Tests
 
 Each test must run independently in any order. No mutable shared state,

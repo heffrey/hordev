@@ -56,6 +56,21 @@ Before specifying any interface, read it in the source on the branch being
 built. Where source and documentation disagree, that disagreement is a finding
 to surface, not something to quietly resolve in favour of the docs.
 
+## Probe Platform Gates Before the Spec Depends on Them
+
+A capability the platform grants rather than the code provides is checked on
+the user's account and machine while you write the spec, not after dispatch:
+an entitlement, a signing identity, an API key, a paid tier, a toolchain
+version. Checking is usually one command. A CarPlay success criterion was
+committed to and dispatched before anyone checked the team had the entitlement,
+and it had not. A native module failed to build on the installed Xcode only
+after the horde had finished writing against it.
+
+If the work has a native or otherwise slow build, start it now against the
+unchanged tree so toolchain failures surface while the horde is still writing.
+A gate that is unavailable becomes a fallback in the spec and an entry in the
+ledger. It does not become a question unless every fallback wastes the run.
+
 ## Never Cite an Assumption You Have Not Written
 
 Write the entry first, then cite it. `assumption-ledger` owns this rule and the

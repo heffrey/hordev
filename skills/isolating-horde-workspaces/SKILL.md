@@ -67,6 +67,17 @@ git worktree add "$AGENT_WORKTREE" "$BASE" -b "horde/agent-$AGENT_NAME"
 
 Each agent owns its worktree directory and branch. Keep it isolated: do NOT access files across worktrees.
 
+### Agents never call EnterWorktree
+
+A session has one isolation pin, and dispatched agents share it. Three race
+candidates each called `EnterWorktree` on their own path; every call moved the
+pin, refused the siblings' writes, and moved the orchestrator's cwd with it.
+The orchestrator creates every worktree before dispatch and hands each agent an
+absolute path to work at. If the harness can isolate an agent itself (for
+Claude Code, `isolation: "worktree"` on the Agent call), use that instead of a
+pre-made path. Either way, the prompt forbids `EnterWorktree` in its
+prohibitions.
+
 ## Sibling Repositories
 
 Work that spans two git repositories (an app and its marketing site, a service
@@ -143,7 +154,7 @@ git log --oneline -1  # Note the SHA
 
 **Always:**
 - Run `git worktree list` at the start to confirm the horde's isolation.
-- Pass `$HORDE_ROOT` or `$AGENT_WORKTREE_N` to all dispatched agents as an env var. They `cd` there immediately.
+- Pass `$HORDE_ROOT` or `$AGENT_WORKTREE_N` to all dispatched agents as an absolute path. They work there and never call `EnterWorktree`.
 - Commit and verify each agent's work before removing its worktree.
 
 ## Run Lifecycle

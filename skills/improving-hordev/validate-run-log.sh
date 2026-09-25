@@ -54,6 +54,10 @@ for log in "$@"; do
       if ($0 ~ /^(SKILL|COST|CLASS|RULE):/) problem(NR, "field before the first EVENT")
       else if ($0 ~ /^##/) problem(NR, "heading in the preamble; entries are fields, not sections")
       else if ($0 ~ /^\|/) problem(NR, "table in the preamble; entries are fields, not tables")
+      # Fields of an invented format (WHAT:, - CAUSE:) never reach a separator,
+      # so without this a log written entirely from memory reads as 0 entries, ok.
+      else if ($0 ~ /^[[:space:]]*([-*][[:space:]]+)?[A-Z][A-Z]+:/)
+        problem(NR, "field outside the entry format; entries are EVENT, SKILL, COST, CLASS, RULE: " substr($0, 1, 60))
       next
     }
 
