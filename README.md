@@ -136,7 +136,7 @@ Requires `bash`. Nothing else.
 
 ## Status
 
-Early. Version 0.8.0.
+Early. Version 0.8.1.
 
 The skills are written, and both hooks run inside live Claude Code sessions:
 `session-start.sh` injects the entrypoint skill at startup, and `reflect.sh`
