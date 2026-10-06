@@ -6,6 +6,20 @@ log. A failure seen twice earns a rule; seen three times, a rewrite.
 Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
 
+## 0.8.3 — 2026-10-06
+
+Amendments from the first Reflect run on this clone. `format-drift` cleared the
+recurring bar: three agent-written artifacts invented their own format because
+no prompt showed them the canonical one.
+
+- `decomposing-for-hordes`: new "Artifact paths and formats" bullet in What
+  Stays With You — shared artifacts (spec files, TDD files, run log, assumption
+  entries) are interfaces; their canonical path and exact format must be inlined
+  in every agent prompt that reads or writes one.
+- `writing-hordev-skills`: trigger test added to the Description field section —
+  a description naming the skill's own actions instead of the user's situation
+  fails as a trigger condition.
+
 ## 0.8.2 — 2026-09-25
 
 Reflect wrote proposed amendments to each project's

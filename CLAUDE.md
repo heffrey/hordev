@@ -65,7 +65,7 @@ tool.
 
 ## Status
 
-Version 0.8.2. The plugin manifest, both hooks, and the skill library exist. There is no
+Version 0.8.3. The plugin manifest, both hooks, and the skill library exist. There is no
 build step. `tests/run.sh` runs a dependency-free bash suite that exercises both hooks and
 every script beside a skill against fixture projects; run it before committing a change to
 any of them. Skill prose itself is still validated by reading it.
@@ -76,29 +76,72 @@ projects.
 
 ## Releasing
 
-The version string lives in four files — `.claude-plugin/plugin.json`,
-`.claude-plugin/marketplace.json`, this file, and `README.md` — and it drifted twice when
-only the first was bumped, so 0.4.0 and 0.5.0 never actually shipped. `marketplace.json` is
-the one installs read; a stale one means nobody downstream sees the release at all.
+### When to release
 
-Never edit those four by hand. `scripts/version.sh` bumps all of them at once and verifies
-each edit matched exactly once:
+Every merged amendment that changes skill behaviour ships as a patch release. A
+content PR without a version bump is a draft waiting for its release commit; do
+not leave one open past the session that created it.
+
+### The version string
+
+The version string lives in four files — `.claude-plugin/plugin.json`,
+`.claude-plugin/marketplace.json`, this file, and `README.md` — and it drifted
+twice when only the first was bumped, so 0.4.0 and 0.5.0 never actually shipped.
+`marketplace.json` is the one installs read; a stale one means nobody downstream
+sees the release at all.
+
+Never edit those four by hand. `scripts/version.sh` bumps all of them at once
+and verifies each edit matched exactly once:
 
 ```bash
 scripts/version.sh            # check all four agree; non-zero if they do not
-scripts/version.sh 0.6.0      # set all four
+scripts/version.sh 0.8.3      # set all four to 0.8.3
 ```
 
-`scripts/git-hooks/pre-commit` refuses a commit that would leave them disagreeing. It is not
-active in a fresh clone until someone runs `git config core.hooksPath scripts/git-hooks`.
+`scripts/git-hooks/pre-commit` refuses a commit that would leave them
+disagreeing. Activate it in a fresh clone once:
 
-If prose around a version string is reworded, `version.sh` fails loudly with the pattern that
-stopped matching. Fix the pattern in the `SITES` array — do not drop the site, or the next
-bump skips that file while reporting success, which is the failure this replaces.
+```bash
+git config core.hooksPath scripts/git-hooks
+```
 
-Tag every release: `git tag -a v<version>` and push with `--follow-tags`. Every release
-from v0.2.0 is tagged; v0.2.0 through v0.4.0 were tagged retroactively. Add the release to
-`CHANGELOG.md` in the content commits, before the `Release` commit.
+If prose around a version string is reworded, `version.sh` fails loudly with
+the pattern that stopped matching. Fix the pattern in the `SITES` array — do
+not drop the site, or the next bump silently skips that file.
+
+### Commit sequence
+
+Work on a branch (the worktree created for amendments is the right place):
+
+1. **Content commits** — skill edits, hook changes, new tests. Each commit
+   message names what changed: `improving-hordev: decomposing-for-hordes — add rule`.
+2. **Changelog commit** — add an entry at the top of `CHANGELOG.md` under the
+   new version heading and today's date. Message: `Changelog for x.y.z`.
+3. **Release commit** — run `scripts/version.sh x.y.z`, then commit the four
+   bumped files. Message: `Release x.y.z` exactly.
+
+### PR convention
+
+PR title: `Release x.y.z: short description of what changed`. Open against
+`main`. The branch created for amendments already has the content commits;
+add the changelog and release commits there before opening the PR.
+
+### After merge
+
+```bash
+git pull                      # get main up to date
+git tag -a v0.8.3 -m "Release 0.8.3"
+git push --follow-tags
+```
+
+Tag after merge, not before — the tag goes on the merge commit on `main`. Every
+release from v0.2.0 is tagged; v0.2.0 through v0.4.0 were tagged retroactively.
+
+### Clone-based installs
+
+If skills are symlinked from this clone (the manual install path), edits take
+effect at the start of the next session — there is no wait for a marketplace
+update. A merged amendment is live as soon as the clone is pulled.
 
 ## Target architecture
 

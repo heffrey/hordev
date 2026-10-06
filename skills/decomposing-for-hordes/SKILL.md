@@ -63,6 +63,11 @@ Decide these before dispatch; every parallel task compiles against them:
 - **Shared configuration.** Env vars, feature flags, runtime settings.
 - **Any config a new task will newly match** (surface 2 above).
 - **Anything you intend to edit yourself** (surface 5).
+- **Artifact paths and formats.** Shared artifacts — spec files under `.hordev/specs/`,
+  TDD files, `.hordev/run-log.md`, assumption entries — are interfaces, not
+  incidentals. Fix the canonical path and inline the exact format in every agent
+  prompt that reads or writes one. An agent that invents a format for a shared
+  artifact was not shown it.
 
 "Locked" means decided, not blessed. There is no approval gate here.
 
