@@ -19,6 +19,8 @@ Your description is the ONLY text a model sees when deciding whether to load you
 
 Start with "Use when" and list concrete symptoms or situations. Add keywords an agent would search for (error messages, tool names, symptoms).
 
+**Trigger test:** Ask — "would a model match this description to the situation the skill is for, given only this text?" A description that names the skill's own actions ("extracts", "produces", "dispatches") rather than the user's situation ("when a request needs", "when requirements are vague") fails this test. Rewrite until the trigger situation is the subject.
+
 ## File Structure
 
 ```
