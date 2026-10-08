@@ -6,6 +6,23 @@ log. A failure seen twice earns a rule; seen three times, a rewrite.
 Versions 0.2.0 through 0.4.0 were tagged retroactively. There is no release
 before 0.2.0.
 
+## 0.8.4 — 2026-10-08
+
+`green-but-broken` cleared the recurring bar: four entries across two logs
+where every check passed and the real runtime did not work — an unmigrated
+dev database, a mutation route that leaked drafts on an empty body, a server
+page that fetched its own API on an unset URL and rendered empty in the
+deployed pod, and a hook verified only by syntax.
+
+- `horde-qa`: new checklist step 3a, "Deployed-runtime smoke, for every new
+  surface" — run the production build configured as deployed, load every new
+  page and check it holds real data, probe every new or changed mutation route
+  as the least-privileged role with `{}` and unknown-field bodies, apply the
+  branch's migrations to the database the runtime reads, and name anything that
+  could not be run as unverified. Scoped as one step rather than the full
+  rewrite the bar schedules, because step 3 already required the real path; the
+  escapes were the specifics it left implicit.
+
 ## 0.8.3 — 2026-10-06
 
 Amendments from the first Reflect run on this clone. `format-drift` cleared the
