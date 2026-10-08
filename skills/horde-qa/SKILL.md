@@ -151,6 +151,29 @@ Cheapest invalidation first: the suite (checklist 0-2), then the real path
    - When a defect is found mid-run, grep for every other instance of the same
      class before fixing the one. The first fix makes the class look handled.
 
+3a. **Deployed-runtime smoke, for every new surface.** Step 3 in the shapes
+   that keep escaping. Unit tests mock exactly the boundaries where these
+   break, so run each one, put what it printed in the report, and do not pass
+   Verify without them:
+   - **The build that ships, configured as deployed.** Start the production
+     build with the port, base URL and environment the deployment sets, not
+     the dev server's. A server page that calls its own API over HTTP, or
+     reads a variable nothing sets, works in dev and renders empty in a pod.
+     Server code calls shared server logic directly, never its own HTTP API.
+   - **Every new page, loaded once in that runtime.** Check the response holds
+     real data, not just a 200: an empty section is the failure, and it raises
+     no error.
+   - **Every new or changed mutation route, as the least-privileged role,**
+     sent an empty body `{}` and a body of only unknown fields. Expect a
+     refusal and no resource data in the response. Field-specific tests never
+     reach this path, because they always send a field.
+   - **Against the schema the runtime reads.** Apply the branch's migrations
+     to that database first; a green suite over mocks says nothing about an
+     unmigrated table.
+   - **What could not be run, named as unverified.** A hook, a deploy-only
+     integration, anything this session cannot execute goes in the report as
+     not verified. A syntax or payload-shape check never stands in for it.
+
 4. **TDD matches spec:** Line-by-line. For each requirement in spec, TDD tests
    it or explicitly assumes it won't be tested.
    - If silent gap: check prototype handles it. If not, escalate to `rapid-spec`.
